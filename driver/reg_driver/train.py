@@ -567,7 +567,7 @@ if __name__ == '__main__':
     argparser.add_argument('--ema-decay', help='EMA decay rate', default="0.99")
     argparser.add_argument('--seed', help='Random seed', default=666, type=int)
     argparser.add_argument('--model', help='Model name', default="ResNetFusionTextNetRegression")
-    argparser.add_argument('--backbone', help='Backbone name', default="resnet18")
+    argparser.add_argument('--backbone', help='Backbone name', default=None)
     
     args, extra_args = argparser.parse_known_args()
     

@@ -24,7 +24,9 @@ class Configurable(object):
             config.set('Run', 'gpu_count', args.gpu_count)
             config.set('Network', 'ema_decay', args.ema_decay)
             config.set('Network', 'model', args.model)
-            config.set('Network', 'backbone', args.backbone)
+            # Only override backbone if explicitly provided via command line
+            if args.backbone is not None:
+                config.set('Network', 'backbone', args.backbone)
 
             # Add timestamp to save_dir to avoid conflicts between different training runs
             from datetime import datetime
