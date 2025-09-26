@@ -7,21 +7,30 @@ data_path = ../../data
 csv_path = ../../data/data.csv
 train_filename = train.csv
 test_filename = test.csv
+
+# Implant removal configuration - 
 remove_implants = True
 implant_threshold = 240
 removal_strategy = gaussian_noise
+# Available strategies: zero, mean, gaussian_noise, inpaint, median_background
+# Threshold range: 200-250 (higher = more selective)
+# Note: This configuration enables implant removal to reduce model bias towards metal implants
 
 [Network]
 model = ResNetFusionTextNetRegression
 n_channels = 3
-backbone = resnet18
-use_text_features = True
+backbone = resnet34
+# Supported backbones: resnet18, resnet34, resnet50, resnet101
+# ResNet18: 512 feature dim, fast training
+# ResNet34: 512 feature dim, better performance than ResNet18
+# ResNet50: 2048 feature dim, deeper architecture
+# ResNet101: 2048 feature dim, best performance but slower training
 use_pretrained = True
 ema_decay = 0.99
 anchors_size = 8,16,32
 
 [Save]
-save_dir = ../../log/ASMI_Regression_ImplantCleaned/ResNetFusionTextNetRegression/0_run_ASMI-Reg_2025-09-26_16-34-03
+save_dir = ../../log/${Data:data_name}/${Network:model}/${Run:gpu}_run_${Run:run_num}
 save_model_path = ${save_dir}/checkpoint
 config_file = ${save_dir}/configuration.txt
 load_dir = ${Save:save_dir}
@@ -33,9 +42,11 @@ log_file = ${save_dir}/console_log.txt
 
 [Loss]
 loss_function = mse
+# Alternative: huber, mae, smooth_l1, mse
 huber_delta = 1.0
 
 [Contrastive]
+# Enable/disable contrastive learning and CAM enhancement - DISABLED for baseline
 contrastive_learning = False
 cam_enhancement = True
 contrastive_beta = 0.2
@@ -51,6 +62,7 @@ clip = 0.5
 beta1 = 0.9
 beta2 = 0.999
 
+
 [Scheduler]
 scheduler_patience = 8
 scheduler_factor = 0.9
@@ -61,7 +73,7 @@ train_batch_size = 16
 test_batch_size = 1
 update_every = 1
 gpu = 0
-run_num = ASMI-Reg
+run_num = ASMI-Reg-ImplantCleaned
 workers = 0
 printfreq = 1
 gpu_count = 1
@@ -77,4 +89,3 @@ metrics = mae,mse,rmse,r2,pearson
 save_predictions = True
 plot_results = True
 plot_format = png
-
