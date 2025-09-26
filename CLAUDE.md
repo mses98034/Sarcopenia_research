@@ -232,3 +232,296 @@ The core fusion model combines:
 3. **Self-attention fusion** → Combined representation → **ResRegLessCNN** → ASMI prediction
 
 **Data Flow**: X-ray DICOM (224×224) + Clinical CSV (5 features) → Multi-modal fusion → ASMI regression (kg/m²)
+
+## Git工作流程 (Git新手教學)
+
+### 基本Git操作
+
+#### 1. 檢查狀態和歷史
+```bash
+# 查看當前狀態
+git status
+
+# 查看提交歷史
+git log --oneline
+
+# 查看檔案變更
+git diff
+```
+
+#### 2. 基本提交流程
+```bash
+# 加入檔案到暫存區
+git add filename.py                # 加入單一檔案
+git add commons/ models/           # 加入特定資料夾
+git add .                          # 加入所有變更 (小心使用)
+
+# 提交變更
+git commit -m "描述你做了什麼變更"
+
+# 推送到GitHub
+git push origin main
+```
+
+#### 3. 撤銷操作
+```bash
+# 撤銷還未commit的變更
+git checkout -- filename.py       # 撤銷單一檔案
+git reset --hard                   # 撤銷所有未commit變更 (危險!)
+
+# 撤銷已加入暫存區的檔案
+git reset HEAD filename.py
+
+# 修改上一次commit訊息
+git commit --amend -m "新的commit訊息"
+```
+
+### GitHub Repository設置
+
+#### 1. 創建GitHub Repository
+1. 前往 https://github.com
+2. 點擊右上角 "+" → "New repository"
+3. Repository name: `MM-CL`
+4. 設為Public (或Private，依需求)
+5. **不要**勾選 "Add a README file" (因為已有檔案)
+6. 點擊 "Create repository"
+
+#### 2. 連接本地和遠端repository
+```bash
+# 加入GitHub remote (替換YOUR_USERNAME)
+git remote add origin https://github.com/YOUR_USERNAME/MM-CL.git
+
+# 推送初始commit
+git branch -M main                 # 將master改名為main
+git push -u origin main           # 推送並設置upstream
+
+# 檢查remote設定
+git remote -v
+```
+
+### Branch管理
+
+#### 1. 創建和切換分支
+```bash
+# 創建新分支並切換
+git checkout -b feature/new-model
+
+# 或使用較新的語法
+git switch -c feature/new-model
+
+# 切換到現有分支
+git checkout main
+git switch main
+
+# 查看所有分支
+git branch -a
+```
+
+#### 2. 合併分支
+```bash
+# 切換到main分支
+git checkout main
+
+# 合併feature分支
+git merge feature/new-model
+
+# 刪除已合併的分支
+git branch -d feature/new-model
+```
+
+### Issue管理
+
+#### 1. 創建Issue
+1. 前往GitHub repository頁面
+2. 點擊 "Issues" tab
+3. 點擊 "New issue"
+4. 填寫標題和描述：
+   ```
+   標題: Fix ASMI regression model accuracy
+
+   描述:
+   ## 問題描述
+   當前模型在驗證集上的R²分數過低 (<0.5)
+
+   ## 預期結果
+   提升R²分數至0.7以上
+
+   ## 可能的解決方案
+   - [ ] 調整learning rate
+   - [ ] 嘗試不同backbone
+   - [ ] 增加data augmentation
+   ```
+5. 指派Labels (bug, enhancement, documentation等)
+6. 點擊 "Submit new issue"
+
+#### 2. 關閉Issue
+在commit訊息中使用關鍵字：
+```bash
+git commit -m "Fix model accuracy by adjusting hyperparameters
+
+- Reduced learning rate to 1e-5
+- Added dropout to prevent overfitting
+- Improved R² score from 0.45 to 0.72
+
+Fixes #1"
+```
+
+### Pull Request (PR) 工作流程
+
+#### 1. 標準PR流程
+```bash
+# 1. 創建feature分支
+git checkout -b feature/improve-accuracy
+
+# 2. 進行程式碼修改
+# ... 編輯檔案 ...
+
+# 3. 提交變更
+git add models/reg_models/resnet.py
+git commit -m "Improve model accuracy with better hyperparameters"
+
+# 4. 推送分支到GitHub
+git push origin feature/improve-accuracy
+```
+
+#### 2. 在GitHub創建PR
+1. 前往GitHub repository
+2. 會看到 "Compare & pull request" 按鈕，點擊它
+3. 填寫PR資訊：
+   ```
+   標題: Improve ASMI regression model accuracy
+
+   描述:
+   ## Changes
+   - Adjusted learning rate from 1e-4 to 1e-5
+   - Added dropout layer (p=0.3) to ResNet fusion
+   - Implemented early stopping with patience=10
+
+   ## Results
+   - R² score improved from 0.45 to 0.72
+   - MAE reduced from 1.2 to 0.8
+
+   ## Testing
+   - [x] Trained on full dataset (5-fold CV)
+   - [x] Verified on test set
+   - [x] All tests pass
+
+   Closes #1
+   ```
+4. 選擇Reviewers (如有協作者)
+5. 點擊 "Create pull request"
+
+#### 3. 合併PR
+1. 等待review (如果是個人專案可直接合併)
+2. 在GitHub上點擊 "Merge pull request"
+3. 選擇合併方式：
+   - **Create a merge commit**: 保留分支歷史
+   - **Squash and merge**: 將多個commit合併為一個
+   - **Rebase and merge**: 重新排列commit歷史
+
+### 日常開發工作流程
+
+#### 1. 每日工作開始前
+```bash
+# 確保在main分支並更新到最新
+git checkout main
+git pull origin main
+
+# 創建新的feature分支
+git checkout -b feature/YYYY-MM-DD-task-description
+```
+
+#### 2. 開發過程中
+```bash
+# 經常提交小的變更
+git add .
+git commit -m "Add data preprocessing validation"
+
+# 定期推送到遠端
+git push origin feature/YYYY-MM-DD-task-description
+```
+
+#### 3. 完成功能後
+```bash
+# 確保code quality
+python driver/reg_driver/train.py --config-file ./config/reg_configuration.txt --gpu 0  # 測試
+
+# 最終提交
+git add .
+git commit -m "Complete feature implementation with tests"
+git push origin feature/YYYY-MM-DD-task-description
+
+# 在GitHub創建PR
+```
+
+### 常見問題解決
+
+#### 1. 合併衝突
+```bash
+# 當git merge或git pull出現衝突時
+git status                         # 查看衝突檔案
+
+# 手動編輯衝突檔案，移除 <<<<<<< ======= >>>>>>> 標記
+# 解決後：
+git add conflicted_file.py
+git commit -m "Resolve merge conflicts"
+```
+
+#### 2. 錯誤的commit
+```bash
+# 還沒push的情況下，撤銷上一個commit
+git reset --soft HEAD~1            # 保留變更
+git reset --hard HEAD~1            # 完全撤銷 (危險!)
+
+# 已經push的情況，創建新的commit來修正
+git revert HEAD
+```
+
+#### 3. 忘記創建分支就開始開發
+```bash
+# 創建分支並保留當前變更
+git stash                          # 暫存變更
+git checkout -b feature/fix-issue  # 創建分支
+git stash pop                      # 恢復變更
+```
+
+### 實用Git別名設定
+```bash
+# 設置常用的git alias
+git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.cm commit
+git config --global alias.lg "log --oneline --graph --all"
+
+# 使用例子
+git st                            # 等同於 git status
+git lg                           # 美化的log顯示
+```
+
+### 專案特定工作流程
+
+對於MM-CL專案，建議的分支命名規範：
+- `feature/model-improvement` - 模型改進
+- `feature/data-preprocessing` - 資料前處理
+- `bugfix/training-crash` - 修復bug
+- `experiment/new-backbone` - 實驗性功能
+
+提交訊息格式建議：
+```
+類型: 簡短描述 (50字元內)
+
+詳細說明 (如需要):
+- 具體變更內容
+- 實驗結果或性能改進
+- 相關Issue編號
+
+範例:
+feat: Add ResNet50 backbone support
+
+- Implemented ResNet50 in backbone module
+- Updated configuration to support deeper architectures
+- Improved R² score from 0.68 to 0.74 on validation set
+
+Closes #15
+```
