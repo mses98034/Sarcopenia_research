@@ -278,6 +278,8 @@ def print_cv_summary(all_fold_results):
 def main_train(config, seed=111):
     """Main training function - similar to test.py main function"""
     
+    from driver.reg_driver.losses import PearsonLoss, CCCLoss
+
     # Setup loss function using configuration
     if config.loss_function == 'mse':
         criterion = nn.MSELoss()
@@ -287,6 +289,10 @@ def main_train(config, seed=111):
         criterion = nn.L1Loss()
     elif config.loss_function == 'smooth_l1':
         criterion = nn.SmoothL1Loss()
+    elif config.loss_function == 'pearson':
+        criterion = PearsonLoss()
+    elif config.loss_function == 'ccc':
+        criterion = CCCLoss()
     else:
         raise ValueError(f"Unsupported loss function: {config.loss_function}")
 
@@ -325,8 +331,7 @@ def main_train(config, seed=111):
         'weight_decay': config.weight_decay
     }
 
-    # Add algorithm-specific parameters
-    if config.learning_algorithm == 'adam':
+    if config.learning_algorithm in ['adam', 'adamw']:
         optimizer_kwargs.update({
             'eps': config.epsilon,
             'betas': (config.beta1, config.beta2)
@@ -340,15 +345,27 @@ def main_train(config, seed=111):
     print(f"Using optimizer: {config.learning_algorithm.upper()} with params: {optimizer_kwargs}")
     print(f"Data augmentation: AutoAugment enabled for training")
     
+    from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
+
+    # ... (omitting optimizer setup for brevity)
+
     # Setup scheduler using configuration
-    scheduler = ReduceLROnPlateau(
-        optimizer,
-        mode='min',
-        factor=config.scheduler_factor,
-        patience=config.scheduler_patience,
-        min_lr=config.min_lrate
-    )
-    print(f"Scheduler: ReduceLROnPlateau (factor={config.scheduler_factor}, patience={config.scheduler_patience}, min_lr={config.min_lrate})")
+    if config.scheduler_type == 'cosine':
+        scheduler = CosineAnnealingLR(
+            optimizer,
+            T_max=config.epochs,  # T_max is often the total number of epochs
+            eta_min=config.min_lrate
+        )
+        print(f"Scheduler: CosineAnnealingLR (T_max={config.epochs}, min_lr={config.min_lrate})")
+    else:  # Default to plateau
+        scheduler = ReduceLROnPlateau(
+            optimizer,
+            mode='min',
+            factor=config.scheduler_factor,
+            patience=config.scheduler_patience,
+            min_lr=config.min_lrate
+        )
+        print(f"Scheduler: ReduceLROnPlateau (factor={config.scheduler_factor}, patience={config.scheduler_patience}, min_lr={config.min_lrate})")
     
     # 5-fold cross-validation training
     all_fold_results = []
@@ -396,13 +413,16 @@ def main_train(config, seed=111):
                 optimizer_kwargs['momentum'] = getattr(config, 'momentum', 0.9)
 
             optimizer = optimizer_class(model.parameters(), **optimizer_kwargs)
-            scheduler = ReduceLROnPlateau(
-                optimizer,
-                mode='min',
-                factor=config.scheduler_factor,
-                patience=config.scheduler_patience,
-                min_lr=config.min_lrate
-            )
+            if config.scheduler_type == 'cosine':
+                scheduler = CosineAnnealingLR(optimizer, T_max=config.epochs, eta_min=config.min_lrate)
+            else: # Default to plateau
+                scheduler = ReduceLROnPlateau(
+                    optimizer,
+                    mode='min',
+                    factor=config.scheduler_factor,
+                    patience=config.scheduler_patience,
+                    min_lr=config.min_lrate
+                )
         
         best_val_loss = float('inf')
         best_model_state = None
@@ -422,9 +442,12 @@ def main_train(config, seed=111):
             # Validate
             val_loss, val_metrics, _, _, _ = validate_epoch(model, val_loader, criterion, device)
             
-            # Update scheduler
+            # Update scheduler based on its type
             old_lr = optimizer.param_groups[0]['lr']
-            scheduler.step(val_loss)
+            if config.scheduler_type == 'plateau':
+                scheduler.step(val_loss)
+            else:  # For cosine or other epoch-based schedulers
+                scheduler.step()
             new_lr = optimizer.param_groups[0]['lr']
 
             # Track scheduler state
@@ -464,27 +487,41 @@ def main_train(config, seed=111):
                     else:
                         reg_help.log.write(f"  ⚠️  Val loss increased: {prev_val_loss:.4f} → {val_loss:.4f}\n")
             
-            # Early stopping
-            if val_loss < best_val_loss:
-                best_val_loss = val_loss
-                best_epoch = epoch
-                best_epoch_metrics = {
-                    'train_loss': train_loss,
-                    'val_loss': val_loss,
-                    'train_metrics': train_metrics.copy(),
-                    'val_metrics': val_metrics.copy()
-                }
-                patience_counter = 0
-                # Save best model state for this fold (in memory only)
-                best_model_state = model.state_dict().copy()
+            # Early stopping, only if enabled in config
+            if config.early_stopping:
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    best_epoch = epoch
+                    best_epoch_metrics = {
+                        'train_loss': train_loss,
+                        'val_loss': val_loss,
+                        'train_metrics': train_metrics.copy(),
+                        'val_metrics': val_metrics.copy()
+                    }
+                    patience_counter = 0
+                    # Save best model state for this fold (in memory only)
+                    best_model_state = model.state_dict().copy()
+                else:
+                    patience_counter += 1
+                    
+                if patience_counter >= max_patience:
+                    early_stop_msg = f"Early stopping at epoch {epoch}"
+                    reg_help.log.write(f"{early_stop_msg}\n")
+                    reg_help.log.flush()
+                    break
+            # If early stopping is disabled, still track the best model from the entire run
             else:
-                patience_counter += 1
-                
-            if patience_counter >= max_patience:
-                early_stop_msg = f"Early stopping at epoch {epoch}"
-                reg_help.log.write(f"{early_stop_msg}\n")
-                reg_help.log.flush()
-                break
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    best_epoch = epoch
+                    best_epoch_metrics = {
+                        'train_loss': train_loss,
+                        'val_loss': val_loss,
+                        'train_metrics': train_metrics.copy(),
+                        'val_metrics': val_metrics.copy()
+                    }
+                    # Save best model state for this fold (in memory only)
+                    best_model_state = model.state_dict().copy()
         
         # Get final predictions for scatter plot
         model.load_state_dict(best_model_state)
@@ -566,7 +603,7 @@ if __name__ == '__main__':
     argparser.add_argument('--run-num', help='Run identifier', default="ASMI-Reg")
     argparser.add_argument('--ema-decay', help='EMA decay rate', default="0.99")
     argparser.add_argument('--seed', help='Random seed', default=666, type=int)
-    argparser.add_argument('--model', help='Model name', default="ResNetFusionTextNetRegression")
+    argparser.add_argument('--model', help='Model name', default=None)
     argparser.add_argument('--backbone', help='Backbone name', default=None)
     
     args, extra_args = argparser.parse_known_args()

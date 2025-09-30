@@ -58,24 +58,17 @@ class ResNetFusionTextNetRegression(BaseModel):
 
         self.atten = Self_Attn(self.feature_dim + self.text_dim)
 
-        # Dynamic scale determination based on backbone architecture
-        if backbone[:3] == 'vgg':
+        # Robust, dynamic scale determination based on feature dimension
+        if self.feature_dim == 512: # For ResNet18, ResNet34
             self.scale1 = 16
-        elif backbone in ['resnet18', 'resnet34']:
-            self.scale1 = 16
-        elif backbone in ['resnet50', 'resnet101', 'resnet152']:
+        elif self.feature_dim == 2048: # For ResNet50, ResNet101, etc.
             self.scale1 = 64
+        elif self.feature_dim == 1280: # For EfficientNet-B0
+            self.scale1 = 40 # 1280 / 32 (filter_num) = 40
         else:
-            # Fallback to original logic for unknown backbones
-            try:
-                if int(backbone[6:]) > 34:
-                    self.scale1 = 64
-                elif int(backbone[6:]) <= 34:
-                    self.scale1 = 16
-                else:
-                    self.scale1 = 16
-            except:
-                raise Exception(f'Unknown backbone: {backbone}')
+            # A generic fallback for other potential backbones
+            # This might need adjustment if a new backbone's feature_dim is not divisible by filter_num
+            self.scale1 = self.feature_dim // self.filter_num
 
         # Image-only regression head using ResRegLessCNN
         self.image_regressor = ResRegLessCNN(filter_num=self.filter_num, scale=self.scale1)

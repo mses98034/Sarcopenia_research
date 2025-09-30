@@ -2,9 +2,12 @@ import torch
 import torchvision.transforms as tvt
 from sarcopenia_data.auto_augment import AutoAugment
 
+from torch.optim import SGD, Adam, AdamW
+
 OPTIM = {
-    'adam': torch.optim.Adam,
-    'sgd': torch.optim.SGD,
+    'sgd': SGD,
+    'adam': Adam,
+    'adamw': AdamW,
 }
 
 mean = [0.485, 0.456, 0.406]

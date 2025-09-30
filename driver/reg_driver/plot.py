@@ -64,6 +64,16 @@ class TrainingAnalyzer:
         # Create plots directory
         os.makedirs(self.plots_dir, exist_ok=True)
 
+        # Load configuration file
+        config_path = os.path.join(self.log_dir, 'configuration.txt')
+        if os.path.exists(config_path):
+            config_args = argparse.Namespace(config_file=config_path, train=False)
+            self.config = Configurable(config_args, [])
+            print(f"✅ Loaded configuration from: {config_path}")
+        else:
+            print(f"⚠️ Warning: configuration.txt not found. Some plot features may be limited.")
+            self.config = None
+
         # Load all CSV data
         self.data = self.load_csv_data()
 
@@ -89,80 +99,78 @@ class TrainingAnalyzer:
         return data
 
     def plot_training_curves(self):
-        """Generate aggregated learning curves from training_metrics.csv"""
+        """Generate aggregated learning curves with annotations for best performance."""
         if self.data['training_metrics'] is None:
             print("❌ Cannot plot training curves: training_metrics.csv not found")
             return
 
-        print("📊 Generating aggregated learning curves...")
+        print("📊 Generating enhanced aggregated learning curves with annotations...")
 
         df = self.data['training_metrics']
 
-        # Set seaborn style with enhanced readability
+        # --- Dynamic Labels from Config ---
+        if self.config and hasattr(self.config, 'loss_function'):
+            loss_name = self.config.loss_function.upper()
+        else:
+            loss_name = 'Loss'  # Fallback if config is not available
+
+        # --- Data Aggregation ---
         sns.set_style("whitegrid")
         sns.set_context("paper", font_scale=1.6)
         plt.rcParams['figure.facecolor'] = 'white'
 
-        # Aggregate metrics by epoch across all folds
         agg_data = df.groupby('epoch').agg({
-            'train_loss': ['mean', 'std'],
-            'val_loss': ['mean', 'std'],
-            'train_mae': ['mean', 'std'],
-            'val_mae': ['mean', 'std'],
-            'train_r2': ['mean', 'std'],
-            'val_r2': ['mean', 'std'],
+            'train_loss': ['mean', 'std'], 'val_loss': ['mean', 'std'],
+            'train_mae': ['mean', 'std'], 'val_mae': ['mean', 'std'],
+            'train_r2': ['mean', 'std'], 'val_r2': ['mean', 'std'],
             'val_pearson': ['mean', 'std']
         }).reset_index()
-
-        # Flatten column names
         agg_data.columns = ['_'.join(col).strip() if col[1] else col[0] for col in agg_data.columns.values]
 
-        # Create 2x2 subplots for comprehensive view
-        fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+        # --- Find Best Performing Points for Annotation ---
+        # Best validation loss (minimum)
+        best_loss_idx = agg_data['val_loss_mean'].idxmin()
+        best_loss_row = agg_data.loc[best_loss_idx]
+        best_loss_epoch = int(best_loss_row['epoch'])
+        best_loss_val = best_loss_row['val_loss_mean']
+
+        # Best validation Pearson (maximum)
+        best_pearson_idx = agg_data['val_pearson_mean'].idxmax()
+        best_pearson_row = agg_data.loc[best_pearson_idx]
+        best_pearson_epoch = int(best_pearson_row['epoch'])
+        best_pearson_val = best_pearson_row['val_pearson_mean']
+
+        # --- Plotting ---
+        fig, axes = plt.subplots(2, 2, figsize=(18, 14))
         fig.suptitle('Aggregated Learning Curves (5-Fold Cross-Validation)', fontsize=24, fontweight='semibold')
 
         # 1. Training/Validation Loss
         ax = axes[0, 0]
-        # Training loss
-        ax.plot(agg_data['epoch'], agg_data['train_loss_mean'], color='steelblue',
-                label='Training Loss', linewidth=2.5)
-        ax.fill_between(agg_data['epoch'],
-                       agg_data['train_loss_mean'] - agg_data['train_loss_std'],
-                       agg_data['train_loss_mean'] + agg_data['train_loss_std'],
-                       color='steelblue', alpha=0.2, label='Training ± σ')
+        ax.plot(agg_data['epoch'], agg_data['train_loss_mean'], color='steelblue', label='Training Loss', linewidth=2.5)
+        ax.fill_between(agg_data['epoch'], agg_data['train_loss_mean'] - agg_data['train_loss_std'], agg_data['train_loss_mean'] + agg_data['train_loss_std'], color='steelblue', alpha=0.2)
+        ax.plot(agg_data['epoch'], agg_data['val_loss_mean'], color='darkorange', label='Validation Loss', linewidth=2.5, linestyle='--')
+        ax.fill_between(agg_data['epoch'], agg_data['val_loss_mean'] - agg_data['val_loss_std'], agg_data['val_loss_mean'] + agg_data['val_loss_std'], color='darkorange', alpha=0.2)
+        
+        # Annotation for best validation loss
+        ax.plot(best_loss_epoch, best_loss_val, 'o', color='red', markersize=10, label=f'Best Val Loss: {best_loss_val:.4f}')
+        ax.annotate(f'Best: {best_loss_val:.4f}\n@ Epoch {best_loss_epoch}',
+                    xy=(best_loss_epoch, best_loss_val),
+                    xytext=(best_loss_epoch + 5, best_loss_val + 0.1 * (ax.get_ylim()[1] - ax.get_ylim()[0])),
+                    arrowprops=dict(facecolor='black', shrink=0.05, width=1, headwidth=8),
+                    bbox=dict(boxstyle="round,pad=0.4", fc="yellow", ec="black", lw=1, alpha=0.8))
 
-        # Validation loss
-        ax.plot(agg_data['epoch'], agg_data['val_loss_mean'], color='darkorange',
-                label='Validation Loss', linewidth=2.5, linestyle='--')
-        ax.fill_between(agg_data['epoch'],
-                       agg_data['val_loss_mean'] - agg_data['val_loss_std'],
-                       agg_data['val_loss_mean'] + agg_data['val_loss_std'],
-                       color='darkorange', alpha=0.2, label='Validation ± σ')
-
-        ax.set_title('Loss Evolution', fontsize=20, fontweight='semibold', pad=20)
+        ax.set_title(f'{loss_name} Evolution', fontsize=20, fontweight='semibold', pad=20)
         ax.set_xlabel('Epoch', fontsize=16, fontweight='semibold')
-        ax.set_ylabel('MSE Loss', fontsize=16, fontweight='semibold')
+        ax.set_ylabel(f'{loss_name} Value', fontsize=16, fontweight='semibold')
         ax.legend(fontsize=14, frameon=True, fancybox=True, shadow=True)
         ax.grid(True, alpha=0.3)
 
         # 2. Mean Absolute Error
         ax = axes[0, 1]
-        # Training MAE
-        ax.plot(agg_data['epoch'], agg_data['train_mae_mean'], color='steelblue',
-                label='Training MAE', linewidth=2.5)
-        ax.fill_between(agg_data['epoch'],
-                       agg_data['train_mae_mean'] - agg_data['train_mae_std'],
-                       agg_data['train_mae_mean'] + agg_data['train_mae_std'],
-                       color='steelblue', alpha=0.2, label='Training ± σ')
-
-        # Validation MAE
-        ax.plot(agg_data['epoch'], agg_data['val_mae_mean'], color='darkorange',
-                label='Validation MAE', linewidth=2.5, linestyle='--')
-        ax.fill_between(agg_data['epoch'],
-                       agg_data['val_mae_mean'] - agg_data['val_mae_std'],
-                       agg_data['val_mae_mean'] + agg_data['val_mae_std'],
-                       color='darkorange', alpha=0.2, label='Validation ± σ')
-
+        ax.plot(agg_data['epoch'], agg_data['train_mae_mean'], color='steelblue', label='Training MAE', linewidth=2.5)
+        ax.fill_between(agg_data['epoch'], agg_data['train_mae_mean'] - agg_data['train_mae_std'], agg_data['train_mae_mean'] + agg_data['train_mae_std'], color='steelblue', alpha=0.2)
+        ax.plot(agg_data['epoch'], agg_data['val_mae_mean'], color='darkorange', label='Validation MAE', linewidth=2.5, linestyle='--')
+        ax.fill_between(agg_data['epoch'], agg_data['val_mae_mean'] - agg_data['val_mae_std'], agg_data['val_mae_mean'] + agg_data['val_mae_std'], color='darkorange', alpha=0.2)
         ax.set_title('Mean Absolute Error', fontsize=20, fontweight='semibold', pad=20)
         ax.set_xlabel('Epoch', fontsize=16, fontweight='semibold')
         ax.set_ylabel('MAE (kg/m²)', fontsize=16, fontweight='semibold')
@@ -171,52 +179,43 @@ class TrainingAnalyzer:
 
         # 3. R² Score
         ax = axes[1, 0]
-        # Training R²
-        ax.plot(agg_data['epoch'], agg_data['train_r2_mean'], color='steelblue',
-                label='Training R²', linewidth=2.5)
-        ax.fill_between(agg_data['epoch'],
-                       agg_data['train_r2_mean'] - agg_data['train_r2_std'],
-                       agg_data['train_r2_mean'] + agg_data['train_r2_std'],
-                       color='steelblue', alpha=0.2, label='Training ± σ')
-
-        # Validation R²
-        ax.plot(agg_data['epoch'], agg_data['val_r2_mean'], color='darkorange',
-                label='Validation R²', linewidth=2.5, linestyle='--')
-        ax.fill_between(agg_data['epoch'],
-                       agg_data['val_r2_mean'] - agg_data['val_r2_std'],
-                       agg_data['val_r2_mean'] + agg_data['val_r2_std'],
-                       color='darkorange', alpha=0.2, label='Validation ± σ')
-
-        ax.set_title('R² Score (Coefficient of Determination)', fontsize=20, fontweight='semibold', pad=20)
+        ax.plot(agg_data['epoch'], agg_data['train_r2_mean'], color='steelblue', label='Training R²', linewidth=2.5)
+        ax.fill_between(agg_data['epoch'], agg_data['train_r2_mean'] - agg_data['train_r2_std'], agg_data['train_r2_mean'] + agg_data['train_r2_std'], color='steelblue', alpha=0.2)
+        ax.plot(agg_data['epoch'], agg_data['val_r2_mean'], color='darkorange', label='Validation R²', linewidth=2.5, linestyle='--')
+        ax.fill_between(agg_data['epoch'], agg_data['val_r2_mean'] - agg_data['val_r2_std'], agg_data['val_r2_mean'] + agg_data['val_r2_std'], color='darkorange', alpha=0.2)
+        ax.set_title('R² Score', fontsize=20, fontweight='semibold', pad=20)
         ax.set_xlabel('Epoch', fontsize=16, fontweight='semibold')
         ax.set_ylabel('R² Score', fontsize=16, fontweight='semibold')
-        ax.set_ylim(0, 1)
+        ax.set_ylim(bottom=max(agg_data['val_r2_mean'].min() - 0.1, -0.1), top=1.0)
         ax.legend(fontsize=14, frameon=True, fancybox=True, shadow=True)
         ax.grid(True, alpha=0.3)
 
         # 4. Validation Pearson Correlation
         ax = axes[1, 1]
-        ax.plot(agg_data['epoch'], agg_data['val_pearson_mean'], color='green',
-                label='Validation Pearson r', linewidth=2.5)
-        ax.fill_between(agg_data['epoch'],
-                       agg_data['val_pearson_mean'] - agg_data['val_pearson_std'],
-                       agg_data['val_pearson_mean'] + agg_data['val_pearson_std'],
-                       color='green', alpha=0.2, label='Pearson r ± σ')
+        ax.plot(agg_data['epoch'], agg_data['val_pearson_mean'], color='green', label='Validation Pearson r', linewidth=2.5)
+        ax.fill_between(agg_data['epoch'], agg_data['val_pearson_mean'] - agg_data['val_pearson_std'], agg_data['val_pearson_mean'] + agg_data['val_pearson_std'], color='green', alpha=0.2)
+        
+        # Annotation for best validation pearson
+        ax.plot(best_pearson_epoch, best_pearson_val, 'o', color='red', markersize=10, label=f'Best Pearson r: {best_pearson_val:.4f}')
+        ax.annotate(f'Best: {best_pearson_val:.4f}\n@ Epoch {best_pearson_epoch}',
+                    xy=(best_pearson_epoch, best_pearson_val),
+                    xytext=(best_pearson_epoch + 5, best_pearson_val - 0.1 * (ax.get_ylim()[1] - ax.get_ylim()[0])),
+                    arrowprops=dict(facecolor='black', shrink=0.05, width=1, headwidth=8),
+                    bbox=dict(boxstyle="round,pad=0.4", fc="yellow", ec="black", lw=1, alpha=0.8))
 
         ax.set_title('Pearson Correlation Coefficient', fontsize=20, fontweight='semibold', pad=20)
         ax.set_xlabel('Epoch', fontsize=16, fontweight='semibold')
         ax.set_ylabel('Pearson r', fontsize=16, fontweight='semibold')
-        ax.set_ylim(0, 1)
+        ax.set_ylim(bottom=max(agg_data['val_pearson_mean'].min() - 0.1, -0.1), top=1.0)
         ax.legend(fontsize=14, frameon=True, fancybox=True, shadow=True)
         ax.grid(True, alpha=0.3)
 
-        plt.tight_layout()
+        plt.tight_layout(rect=[0, 0.03, 1, 0.97])
         curves_path = os.path.join(self.plots_dir, 'learning_curves.png')
         plt.savefig(curves_path, dpi=300, bbox_inches='tight')
         plt.close()
 
-        print(f"   ✅ Aggregated learning curves saved to: {curves_path}")
-        print(f"       Shows training stability across {len(df['fold'].unique())} folds")
+        print(f"   ✅ Enhanced learning curves saved to: {curves_path}")
 
     def calculate_metrics(self, actual, predicted):
         """Calculate comprehensive performance metrics"""

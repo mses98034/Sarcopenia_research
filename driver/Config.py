@@ -23,7 +23,8 @@ class Configurable(object):
             config.set('Run', 'run_num', args.run_num)
             config.set('Run', 'gpu_count', args.gpu_count)
             config.set('Network', 'ema_decay', args.ema_decay)
-            config.set('Network', 'model', args.model)
+            if args.model is not None:
+                config.set('Network', 'model', args.model)
             # Only override backbone if explicitly provided via command line
             if args.backbone is not None:
                 config.set('Network', 'backbone', args.backbone)
@@ -140,6 +141,14 @@ class Configurable(object):
         except:
             return True
 
+    @property
+    def use_text_features(self):
+        # Default to True if not specified, as fusion models require it.
+        try:
+            return self._config.getboolean('Network', 'use_text_features')
+        except:
+            return True
+
     # ------------Network path config reader--------------------
 
     @property
@@ -247,6 +256,13 @@ class Configurable(object):
     @property
     def scheduler_patience(self):
         return self._config.getint('Scheduler', 'scheduler_patience') 
+
+    @property
+    def scheduler_type(self):
+        try:
+            return self._config.get('Scheduler', 'scheduler_type')
+        except:
+            return 'plateau'  # Default to plateau for backward compatibility
 
     @property
     def scheduler_factor(self):

@@ -37,9 +37,13 @@ RESNET_CONFIGS = {
 
 def get_backbone_feature_dim(backbone):
     """Get the feature dimension for a given backbone"""
-    if backbone not in RESNET_CONFIGS:
-        raise ValueError(f"Unsupported backbone: {backbone}. Supported: {list(RESNET_CONFIGS.keys())}")
-    return RESNET_CONFIGS[backbone]['feature_dim']
+    if backbone in RESNET_CONFIGS:
+        return RESNET_CONFIGS[backbone]['feature_dim']
+    elif backbone == 'efficientnet_b0':
+        return 1280
+    else:
+        supported_backbones = list(RESNET_CONFIGS.keys()) + ['efficientnet_b0']
+        raise ValueError(f"Unsupported backbone: {backbone}. Supported: {supported_backbones}")
 
 class ResNet(nn.Module):
     def __init__(self, backbone, use_pretrained=True, pretrained=None):

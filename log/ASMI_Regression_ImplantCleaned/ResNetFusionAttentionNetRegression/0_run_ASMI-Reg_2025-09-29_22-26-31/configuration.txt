@@ -1,22 +1,26 @@
 [Data]
 patch_x = 224
 patch_y = 224
-data_name = ASMI_Regression
+data_name = ASMI_Regression_ImplantCleaned
 aug_num = 1
 data_path = ../../data
 csv_path = ../../data/data.csv
 train_filename = train.csv
 test_filename = test.csv
+remove_implants = True
+implant_threshold = 240
+removal_strategy = gaussian_noise
 
 [Network]
-model = ResNetFusionTextNetRegression
+model = ResNetFusionAttentionNetRegression
 n_channels = 3
 backbone = resnet18
+use_pretrained = True
 ema_decay = 0.99
 anchors_size = 8,16,32
 
 [Save]
-save_dir = ../../log/ASMI_Regression/ResNetFusionTextNetRegression/0_run_ASMI-Reg_2025-09-19_00-27-25
+save_dir = ../../log/ASMI_Regression_ImplantCleaned/ResNetFusionAttentionNetRegression/0_run_ASMI-Reg_2025-09-29_22-26-31
 save_model_path = ${save_dir}/checkpoint
 config_file = ${save_dir}/configuration.txt
 load_dir = ${Save:save_dir}
@@ -27,33 +31,34 @@ submission_dir = ${load_dir}/submissions
 log_file = ${save_dir}/console_log.txt
 
 [Loss]
-loss_function = mse
+loss_function = ccc
 huber_delta = 1.0
 
 [Contrastive]
-contrastive_learning = True
+contrastive_learning = False
 cam_enhancement = True
-contrastive_beta = 0.01
-contrastive_temperature = 0.5
+contrastive_beta = 0.2
+contrastive_temperature = 0.2
 
 [Optimizer]
-learning_algorithm = adam
+learning_algorithm = adamw
 learning_rate = 1e-4
 weight_decay = 1e-5
 epsilon = 1e-8
-min_lrate = 1e-7
+min_lrate = 1e-6
 clip = 1.0
 beta1 = 0.9
 beta2 = 0.999
 
 [Scheduler]
-scheduler_patience = 3
-scheduler_factor = 0.5
+scheduler_type = cosine
+scheduler_patience = 8
+scheduler_factor = 0.9
 
 [Run]
-n_epochs = 30
+n_epochs = 50
 train_batch_size = 32
-test_batch_size = 1
+test_batch_size = 16
 update_every = 1
 gpu = 0
 run_num = ASMI-Reg
@@ -61,7 +66,7 @@ workers = 0
 printfreq = 1
 gpu_count = 1
 load_best_epoch = True
-patience = 7
+patience = 15
 nfold = 5
 fp16 = False
 train = True
