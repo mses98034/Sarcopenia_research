@@ -8,7 +8,14 @@ csv_path = ../../data/data.csv
 train_filename = train.csv
 test_filename = test.csv
 
-# Implant removal configuration - 
+# Global image cache for K-fold cross-validation optimization
+# - Loads all training images once at startup (instead of per-fold)
+# - Shares cache across all folds (5x faster for 5-fold CV)
+# - Memory usage: ~500-600 MB for 1200 images (224x224)
+# - Recommended: True for training, False if system memory < 8GB
+use_global_image_cache = True
+
+# Implant removal configuration -
 remove_implants = True
 implant_threshold = 240
 removal_strategy = gaussian_noise
@@ -73,7 +80,7 @@ scheduler_patience = 8
 scheduler_factor = 0.9
 
 [Run]
-n_epochs = 50
+n_epochs = 80
 train_batch_size = 32
 test_batch_size = 16
 update_every = 1
@@ -83,7 +90,7 @@ workers = 0
 printfreq = 1
 gpu_count = 1
 load_best_epoch = True
-patience = 15
+patience = 20
 nfold = 5
 fp16 = False
 train = True

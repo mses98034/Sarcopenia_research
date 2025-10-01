@@ -18,6 +18,8 @@ from scipy.stats import pearsonr
 import argparse
 from driver.reg_driver.RegHelper import RegHelper
 from driver.reg_driver.AnalysisHelper import AnalysisHelper
+from driver.reg_driver.FoldResultManager import FoldResultManager
+from sarcopenia_data.GlobalImageCache import GlobalImageCache
 from driver.Config import Configurable
 from tqdm import tqdm
 
@@ -371,23 +373,61 @@ def main_train(config, seed=111):
     all_fold_results = []
     max_patience = config.patience
 
+    # === Initialize fold result manager for memory optimization ===
+    fold_manager = FoldResultManager(config.save_dir)
+
+    # === Initialize global image cache for K-fold optimization ===
+    global_cache = None
+    if config.use_global_image_cache:
+        print("\n" + "="*60)
+        print("Initializing Global Image Cache")
+        print("="*60)
+        reg_help.log.write("\n=== GLOBAL IMAGE CACHE INITIALIZATION ===\n")
+
+        # Load complete training data (before K-fold split)
+        from sarcopenia_data.SarcopeniaDataLoader import load_csv_data
+        train_csv_path = os.path.join(config.data_path, config.train_filename)
+        import pandas as pd
+        all_train_data = pd.read_csv(train_csv_path)
+        all_train_data.columns = [col.strip() for col in all_train_data.columns]
+
+        # Create global cache
+        global_cache = GlobalImageCache(
+            csv_data=all_train_data,
+            input_size=(config.patch_x, config.patch_y),
+            load_images=True
+        )
+
+        cache_summary = global_cache.get_summary()
+        cache_msg = f"Global cache ready: {cache_summary['cached_images']} images ({cache_summary['memory_mb']:.1f} MB)"
+        print(cache_msg)
+        print("="*60 + "\n")
+        reg_help.log.write(f"Global cache: {cache_summary['cached_images']} images, {cache_summary['memory_mb']:.1f} MB\n")
+        reg_help.log.flush()
+    else:
+        print("\nGlobal image cache is disabled")
+        print("   Images will be loaded from disk for each batch (slower)")
+        print("   To enable: set 'use_global_image_cache = True' in config\n")
+        reg_help.log.write("Global image cache: Disabled\n")
+        reg_help.log.flush()
+
     # Track overall best model across all folds
     overall_best_loss = float('inf')
     overall_best_model_state = None
     overall_best_fold = -1
-    
+
     cv_start_msg = f"=== STARTING {config.nfold}-FOLD CROSS-VALIDATION ==="
     reg_help.log.write(cv_start_msg + "\n")
     reg_help.log.flush()
-    
+
     for fold in range(config.nfold):
         fold_header = f"{'='*60}FOLD {fold + 1}/{config.nfold} - {config.backbone.upper()}{'='*60}"
         print(fold_header)
         reg_help.log.write(fold_header + "\\n")
         reg_help.log.flush()
-        
-        # Get data loaders for current fold
-        train_loader, val_loader = reg_help.get_data_loader_csv(fold=fold, seed=seed)
+
+        # Get data loaders for current fold (pass global cache)
+        train_loader, val_loader = reg_help.get_data_loader_csv(fold=fold, seed=seed, shared_cache=global_cache)
         
         # Reset model for each fold
         if fold > 0:
@@ -534,27 +574,30 @@ def main_train(config, seed=111):
             'final_val_metrics': final_val_metrics,
             'final_predictions': final_predictions,
             'final_targets': final_targets,
-            'final_uids': final_uids, 
+            'final_uids': final_uids,
             'history': fold_history
         }
-        all_fold_results.append(fold_result)
+
+        # === Use FoldResultManager to offload large data to disk ===
+        fold_metadata = fold_manager.save_fold_result(fold, fold_result)
+        all_fold_results.append(fold_metadata)  # Only store lightweight metadata
 
         # --- TUNING REPORT ---
         # Print a machine-readable report for the tuning script to capture
         try:
             report_data = {
                 "fold": fold + 1,
-                "pearson": fold_result['final_val_metrics']['pearson'],
-                "val_loss": fold_result['best_val_loss']
+                "pearson": float(fold_metadata['final_val_metrics']['pearson']),  # Convert to Python float
+                "val_loss": float(fold_metadata['best_val_loss'])                  # Convert to Python float
             }
             import json
             print(f"[TUNING_REPORT] {json.dumps(report_data)}")
-        except (KeyError, ImportError):
+        except (KeyError, ImportError, TypeError):
             # Fail silently if keys are not found or json is not available
             pass
         # --- END TUNING REPORT ---
 
-        
+
         fold_complete_msg = f"Fold {fold + 1} completed - Best Val Loss: {best_val_loss:.4f}"
         # Display metrics from the actual best epoch, not recomputed metrics
         if best_epoch_metrics:
@@ -567,12 +610,16 @@ def main_train(config, seed=111):
         reg_help.log.write(fold_summary + "\n")
         reg_help.log.flush()
 
-        # Update overall best model if this fold is better
+        # Update overall best model if this fold is better (BEFORE deleting best_model_state!)
         if best_val_loss < overall_best_loss:
             overall_best_loss = best_val_loss
             overall_best_model_state = best_model_state.copy()
             overall_best_fold = fold
-            print(f"🏆 New overall best model found in fold {fold + 1} with val_loss: {best_val_loss:.4f}")
+            reg_help.log.write(f"🏆 New overall best model found in fold {fold + 1} with val_loss: {best_val_loss:.4f}\n")
+
+        # Explicitly free memory (AFTER saving best model)
+        del final_predictions, final_targets, final_uids, best_model_state
+        torch.cuda.empty_cache()
     
     # Print cross-validation summary
     print_cv_summary(all_fold_results)
@@ -581,22 +628,22 @@ def main_train(config, seed=111):
     if overall_best_model_state is not None:
         best_model_path = os.path.join(config.save_model_path, 'best_model.pth')
         torch.save(overall_best_model_state, best_model_path)
-        print(f"🏆 Overall best model saved to: {best_model_path}")
-        print(f"   Best fold: {overall_best_fold + 1}, Val Loss: {overall_best_loss:.4f}")
+        reg_help.log.write(f"🏆 Overall best model saved to: {best_model_path}\n")
+        reg_help.log.write(f"   Best fold: {overall_best_fold + 1}, Val Loss: {overall_best_loss:.4f}\n")
     else:
-        print("⚠️ Warning: No best model found to save")
+        reg_help.log.write("⚠️ Warning: No best model found to save\n")
 
     # Initialize analysis helper and save CSV data
-    print("\n📊 Saving training data to CSV files...")
+    reg_help.log.write("\n📊 Saving training data to CSV files...\n")
     analysis_helper = AnalysisHelper(config)
     analysis_helper.save_training_csv_data(all_fold_results, config.save_dir, reg_help, best_fold_idx=overall_best_fold)
 
-    print(f"\n🎉 Training completed!")
-    print(f"📁 Results saved to: {config.save_dir}")
-    print(f"📊 CSV data saved to: {config.save_dir}/csv_data/")
-    print(f"🏆 Best model saved to: {config.save_dir}/checkpoint/best_model.pth")
-    print(f"\n💡 To generate plots and visualizations, run:")
-    print(f"   python plot.py --log-dir {config.save_dir}")
+    reg_help.log.write(f"\n🎉 Training completed!\n")
+    reg_help.log.write(f"📁 Results saved to: {config.save_dir}\n")
+    reg_help.log.write(f"📊 CSV data saved to: {config.save_dir}/csv_data/\n")
+    reg_help.log.write(f"🏆 Best model saved to: {config.save_dir}/checkpoint/best_model.pth\n")
+    reg_help.log.write(f"\n💡 To generate plots and visualizations, run:\n")
+    reg_help.log.write(f"   python plot.py --log-dir {config.save_dir}\n")
 
     return all_fold_results
 

@@ -62,20 +62,28 @@ class RegHelper(BaseTrainHelper):
                 "image_text": image_text
             }
 
-    def get_data_loader_csv(self, fold, seed=666, text_only=False):
-        """CSV-based data loading - similar to get_data_loader_pth but for CSV data"""
+    def get_data_loader_csv(self, fold, seed=666, text_only=False, shared_cache=None):
+        """
+        CSV-based data loading with optional global image cache support.
+
+        Args:
+            fold: Current fold index for K-fold cross-validation
+            seed: Random seed for reproducibility
+            text_only: If True, only load clinical features (no images)
+            shared_cache: GlobalImageCache instance for sharing images across folds
+        """
         # Load pre-split CSV data (train.csv and test.csv)
         data_path = self.config.data_path
         train_filename = self.config.train_filename
         test_filename = self.config.test_filename
         train_data, test_data = load_csv_data(data_path, train_filename, test_filename)
 
-        # For K-fold, use only training data 
+        # For K-fold, use only training data
         train_index, val_index = self.get_n_fold(train_data, fold=fold, seed=seed)
-        
+
         fold_train_data = train_data.iloc[train_index]
-        fold_val_data = train_data.iloc[val_index] 
-        
+        fold_val_data = train_data.iloc[val_index]
+
         self.log.write(f"Fold {fold+1} - Train samples: {len(fold_train_data)}, Val samples: {len(fold_val_data)}\n")
 
         # Check if contrastive learning is enabled
@@ -89,7 +97,8 @@ class RegHelper(BaseTrainHelper):
             contrastive_mode=contrastive_learning,  # Enable for training dataset
             remove_implants=self.config.remove_implants,
             implant_threshold=self.config.implant_threshold,
-            removal_strategy=self.config.removal_strategy
+            removal_strategy=self.config.removal_strategy,
+            shared_cache=shared_cache  # Global cache (shared across folds)
         )
 
         val_dataset = SarcopeniaCSVDataSet(
@@ -100,7 +109,8 @@ class RegHelper(BaseTrainHelper):
             contrastive_mode=False,  # Always False for validation
             remove_implants=self.config.remove_implants,
             implant_threshold=self.config.implant_threshold,
-            removal_strategy=self.config.removal_strategy
+            removal_strategy=self.config.removal_strategy,
+            shared_cache=shared_cache  # Global cache (shared across folds)
         )
 
         # Use regression collate function (only regression supported)
@@ -140,7 +150,8 @@ class RegHelper(BaseTrainHelper):
             text_only=text_only,
             remove_implants=self.config.remove_implants,
             implant_threshold=self.config.implant_threshold,
-            removal_strategy=self.config.removal_strategy
+            removal_strategy=self.config.removal_strategy,
+            cache_images=False  # Test set typically doesn't need caching (single pass)
         )
         
         collate_fn = self.merge_batch_regression

@@ -13,13 +13,19 @@ The codebase follows a modular architecture optimized for regression tasks:
 - `driver/` - Core training infrastructure
   - `reg_driver/` - **Regression-specific drivers and helpers** (renamed from cls_driver)
     - `RegHelper.py` - Main regression helper with CSV data loading and batch processing
-    - `train.py` - Training script for ASMI regression
-    - `config/reg_configuration.txt` - Regression configuration with MSE loss, Adam optimizer
+    - `train.py` - Training script for ASMI regression with 5-fold CV
+    - `FoldResultManager.py` - Memory optimization via disk offloading of fold results
+    - `AnalysisHelper.py` - CSV generation and visualization helper
+    - `test.py` - Model evaluation on test set
+    - `tuning.py` - Optuna-based hyperparameter search
+    - `config/reg_configuration.txt` - Regression configuration (CCC loss, AdamW, cosine scheduler)
   - `Config.py` - Configuration management system using ConfigParser
   - `base_train_helper.py` - Base training utilities with **MPS/CUDA/CPU device support**
 
 - `models/` - Model definitions
-  - `reg_models/resnet.py` - ResNet backbone and **ResNetFusionTextNetRegression** model
+  - `reg_models/resnet.py` - **ResNetFusionTextNetRegression** (basic fusion model)
+  - `reg_models/FusionAttentionNet.py` - **ResNetFusionAttentionNetRegression** (with self-attention)
+  - `reg_models/TextNet.py` - TextNet for clinical feature encoding
   - `BaseModel.py` - Base model class
   - `EMA.py` - Exponential Moving Average implementation
 
@@ -31,6 +37,8 @@ The codebase follows a modular architecture optimized for regression tasks:
 
 - `sarcopenia_data/` - **CSV-based data loading**
   - `SarcopeniaDataLoader.py` - CSV dataset classes for regression with DICOM image loading
+  - `GlobalImageCache.py` - Global image cache for K-fold CV optimization (eliminates redundant disk I/O)
+  - `ImplantDetector.py` - Metal implant detection and removal preprocessing
   - `auto_augment.py` - Data augmentation strategies
 
 - `commons/` - Shared utilities
@@ -72,14 +80,25 @@ cd driver/reg_driver
 python test.py --config-file ./config/reg_configuration.txt --gpu 0 --load-best-epoch
 ```
 
+### Hyperparameter Tuning with Optuna
+```bash
+cd driver/reg_driver
+# Run automated hyperparameter search (searches learning rate, weight decay, backbone, loss function, etc.)
+python tuning.py
+
+# Modify N_TRIALS in tuning.py to control number of experiments (default: 100)
+# Results stored in: driver/reg_driver/tuning_results/
+# Search space includes: backbone, model type, scheduler, loss function, learning rate, weight decay, contrastive learning params
+```
+
 ### Generating Visualizations and Analysis
 ```bash
 cd driver/reg_driver
 # Generate publication-ready plots from training logs
-python plot.py --log-dir ../../log/ASMI_Regression/ResNetFusionTextNetRegression/0_run_ASMI-Reg_*/
+python plot.py --log-dir ../../log/ASMI_Regression/ResNetFusionAttentionNetRegression/0_run_ASMI-Reg_*/
 
 # For specific log directory with timestamp
-python plot.py --log-dir ../../log/ASMI_Regression/ResNetFusionTextNetRegression/0_run_ASMI-Reg_2024-XX-XX_XX-XX-XX/
+python plot.py --log-dir ../../log/ASMI_Regression/ResNetFusionAttentionNetRegression/0_run_ASMI-Reg_2024-XX-XX_XX-XX-XX/
 ```
 
 ### Common Development Commands
@@ -110,13 +129,14 @@ python test.py --config-file ./config/reg_configuration.txt --load-model-path /p
 
 ### Key Configuration Parameters
 The regression configuration (`driver/reg_driver/config/reg_configuration.txt`) controls:
-- **Model**: ResNetFusionTextNetRegression with ResNet34 backbone (default)
+- **Model**: ResNetFusionAttentionNetRegression (default) or ResNetFusionTextNetRegression
+- **Backbone**: ResNet18 (default, 512D features), ResNet34/50/101, or EfficientNet-B0
 - **Data**: CSV-based loading with DICOM images (224x224 pixels)
-- **Loss**: MSE loss function (alternatives: huber, mae, smooth_l1)
-- **Optimizer**: Adam with 1e-4 learning rate, 1e-5 weight decay
-- **Training**: 32 batch size, 5-fold cross-validation, early stopping (patience=7)
-- **Learning Rate**: ReduceLROnPlateau scheduler (patience=3, factor=0.5)
-- **Advanced Features**: Contrastive learning, CAM enhancement, implant removal
+- **Loss**: CCC (Concordance Correlation Coefficient, default) or alternatives: mse, huber, mae, smooth_l1, pearson
+- **Optimizer**: AdamW (default) or Adam with 1e-4 learning rate, 1e-5 weight decay
+- **Training**: 32 batch size, 5-fold cross-validation, early stopping (patience=20)
+- **Scheduler**: Cosine annealing (default) or ReduceLROnPlateau
+- **Advanced Features**: Contrastive learning (InfoNCE), CAM enhancement, implant removal
 - **Evaluation**: MAE, MSE, RMSE, R², Pearson correlation metrics
 
 ### Expected Data Format
@@ -131,14 +151,59 @@ The regression configuration (`driver/reg_driver/config/reg_configuration.txt`) 
 
 ### Core Classes and Methods
 - **RegHelper** (`driver/reg_driver/RegHelper.py`): `get_data_loader_csv()`, `merge_batch_regression()`, `get_test_data_loader_csv()`
-- **SarcopeniaCSVDataSet** (`sarcopenia_data/SarcopeniaDataLoader.py`): CSV-based dataset with DICOM loading and clinical feature extraction
-- **ResNetFusionTextNetRegression** (`models/reg_models/resnet.py`): Multi-modal fusion with regression head
+- **SarcopeniaCSVDataSet** (`sarcopenia_data/SarcopeniaDataLoader.py`): CSV-based dataset with DICOM loading, clinical feature extraction, and optional global cache support
+- **GlobalImageCache** (`sarcopenia_data/GlobalImageCache.py`): Centralized image caching for K-fold CV - loads all training images once, shares across folds
+- **FoldResultManager** (`driver/reg_driver/FoldResultManager.py`): Memory optimization by offloading fold results to disk during training
+- **ResNetFusionAttentionNetRegression** (`models/reg_models/FusionAttentionNet.py`): Attention-enhanced multi-modal fusion model (default)
 - **Config** (`driver/Config.py`): ConfigParser-based configuration management with section interpolation
+
+### Memory and Performance Optimizations
+
+The codebase includes two key optimizations for efficient K-fold cross-validation training:
+
+#### 1. Global Image Cache (`GlobalImageCache`)
+**Problem**: In K-fold CV, images were loaded 5 times (once per fold), wasting disk I/O and time.
+
+**Solution**: Load all training images once at startup, share cache across all folds.
+- **Memory**: ~540-650 MB for 1200 images (224×224)
+- **Speedup**: 5× faster fold initialization
+- **Configuration**: `use_global_image_cache = True` in config
+- **Implementation**: Images stored in memory with original CSV paths as keys, automatically handles relative path adjustments
+
+**Workflow**:
+```python
+# Startup (before fold loop)
+global_cache = GlobalImageCache(all_train_data, input_size=(224, 224))
+
+# Each fold uses shared cache
+dataset = SarcopeniaCSVDataSet(fold_data, shared_cache=global_cache)
+# Dataset automatically uses cache.get(img_path) → fast retrieval, no disk I/O
+```
+
+#### 2. Fold Result Manager (`FoldResultManager`)
+**Problem**: Storing complete fold results (predictions, targets, UIDs, history) in memory consumes ~250 MB and grows with each fold.
+
+**Solution**: Offload large arrays to compressed `.npz` files during training, reload only for final analysis.
+- **Memory saved**: ~250 MB during 5-fold training
+- **Format**: Transparent to AnalysisHelper (reloads complete data before CSV generation)
+- **Cleanup**: Automatically removes temporary files after analysis
+
+**Workflow**:
+```python
+# After each fold completes
+metadata = fold_manager.save_fold_result(fold, fold_result)  # Saves to disk
+all_fold_results.append(metadata)  # Only ~1 KB metadata in memory
+
+# Before analysis
+complete_results = fold_manager.load_all_results()  # Reload from disk
+analysis_helper.save_training_csv_data(complete_results, ...)
+fold_manager.cleanup()  # Remove temporary files
+```
 
 ### Device Management
 The system automatically detects and uses the best available device:
 1. CUDA (if available and requested)
-2. MPS (Apple Silicon)  
+2. MPS (Apple Silicon)
 3. CPU (fallback)
 
 ### Key Dependencies
@@ -197,8 +262,14 @@ train_batch_size = 16 # Smaller batches if memory limited
 For specialized training scenarios, modify key parameters:
 
 ```ini
-# Implant removal (reduces bias towards metal implants)
+# Global image cache (K-fold cross-validation optimization)
 [Data]
+use_global_image_cache = True  # Load all images once at startup, share across folds
+                                # Memory: ~540-650 MB for 1200 images (224x224)
+                                # Speedup: 5x faster fold initialization (no redundant disk I/O)
+                                # Disable if system memory < 8GB
+
+# Implant removal (reduces bias towards metal implants)
 remove_implants = True
 implant_threshold = 240
 removal_strategy = gaussian_noise
@@ -226,10 +297,23 @@ Training generates comprehensive outputs:
 - **AnalysisHelper**: Automated generation of publication-ready plots
 
 ### Multi-Modal Architecture Details
-The core fusion model combines:
-1. **ResNet18 backbone** → **Non-local blocks** → Visual features
+
+Two main model architectures are available:
+
+#### ResNetFusionTextNetRegression (Basic Fusion)
+1. **ResNet backbone** → Visual features (512D for ResNet18/34, 2048D for ResNet50/101)
 2. **TextNet** (Conv1d + BatchNorm + SiLU) → Clinical features
-3. **Self-attention fusion** → Combined representation → **ResRegLessCNN** → ASMI prediction
+3. **Concatenation + MLP** → Combined representation → **ResRegLessCNN** → ASMI prediction
+
+#### ResNetFusionAttentionNetRegression (Attention-Enhanced, Default)
+1. **ResNet backbone** → **Non-local blocks** → Enhanced visual features
+2. **TextNet** → Clinical features
+3. **Self-attention fusion** → Weighted combination → **ResRegLessCNN** → ASMI prediction
+
+**Optional Features**:
+- **Contrastive Learning**: InfoNCE loss on augmented image pairs to improve feature representations
+- **CAM Enhancement**: GradCAM++ for attention-guided augmentation (focuses on clinically relevant regions)
+- **Implant Removal**: Preprocessing to reduce metal implant artifacts using gaussian noise or inpainting
 
 **Data Flow**: X-ray DICOM (224×224) + Clinical CSV (5 features) → Multi-modal fusion → ASMI regression (kg/m²)
 

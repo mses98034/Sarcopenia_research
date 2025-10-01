@@ -15,13 +15,16 @@ WORKING_DIRECTORY = os.path.dirname(__file__)
 TUNING_OUTPUT_DIR = os.path.join(WORKING_DIRECTORY, 'tuning_results')
 os.makedirs(TUNING_OUTPUT_DIR, exist_ok=True)
 
+# Regex to identify tqdm progress bar lines by their typical structure.
+TQDM_REGEX = re.compile(r'^\s*\d{1,3}%\|.*\|')
+
 def parse_pearson_from_output(output):
     """Parses the mean Pearson correlation from the stdout of train.py."""
     match = re.search(r"Pearson r\s+-\s+Mean:\s+([\d\.]+)", output)
     if match:
         return float(match.group(1))
     else:
-        print("\n⚠️  Warning: Could not parse final Pearson correlation from training output. Returning 0.0")
+        print("\nWarning: Could not parse final Pearson correlation from training output. Returning 0.0")
         return 0.0
 
 def objective(trial):
@@ -67,18 +70,24 @@ def objective(trial):
         config.write(f)
 
     # --- 3. Run the Training Script and Monitor for Pruning ---
-    command = ['python', 'train.py', '--config', trial_config_path, '--gpu', '0', '--seed', '666']
+    command = ['python', '-u', 'train.py', '--config', trial_config_path, '--gpu', '0', '--seed', '666']
     print(f"\n\n--- Starting Trial {trial.number} ---")
     print(f"Params: {trial.params}")
 
     full_output = []
     try:
-        process = subprocess.Popen(command, cwd=WORKING_DIRECTORY, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding='utf-8', errors='ignore')
+        process = subprocess.Popen(command, cwd=WORKING_DIRECTORY, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors='ignore')
         while True:
             line = process.stdout.readline()
             if not line:
                 break
-            print(line, end='')
+            
+            # Smart printing for progress bars using regex matching
+            if TQDM_REGEX.match(line.strip()):
+                print(line.strip(), end='\r', flush=True)
+            else:
+                print(line, end='')
+
             full_output.append(line)
 
             if line.strip().startswith("[TUNING_REPORT]"):
@@ -97,18 +106,21 @@ def objective(trial):
                     print(f"--- [Tuning Supervisor]: Warning - could not parse report line: {e} ---")
         process.wait()
         if process.returncode != 0:
-            raise subprocess.CalledProcessError(process.returncode, process.args, stdout="".join(full_output))
+            print(f"\n Trial {trial.number} failed with exit code {process.returncode}. Pruning trial.")
+            raise optuna.exceptions.TrialPruned()
 
     except (subprocess.CalledProcessError, KeyboardInterrupt) as e:
         if isinstance(e, KeyboardInterrupt):
-            print(f"\n🛑 Trial {trial.number} interrupted by user. Pruning trial.")
+            print(f"\n Trial {trial.number} interrupted by user. Pruning trial.")
         else:
-            print(f"\n❌ Trial {trial.number} failed with exit code {e.returncode}.")
+            print(f"\n Trial {trial.number} failed with exit code {e.returncode}.")
         if 'process' in locals() and process.poll() is None:
             process.terminate()
         raise optuna.exceptions.TrialPruned()
 
     # --- 4. Parse Final Result and Return to Optuna ---
+    # Add a final newline to avoid the last progress bar sticking
+    print()
     output_str = "".join(full_output)
     final_pearson_score = parse_pearson_from_output(output_str)
     print(f"--- Trial {trial.number} Finished --- Final Pearson Score: {final_pearson_score:.4f} ---")
@@ -124,14 +136,14 @@ if __name__ == '__main__':
     try:
         study.optimize(objective, n_trials=N_TRIALS)
     except KeyboardInterrupt:
-        print("\n🛑 Tuning stopped manually.")
+        print("\n Tuning stopped manually.")
 
     # --- Print the Results ---
     print("\n\n==================================================")
     print("            TUNING COMPLETE                     ")
     print("==================================================")
     print(f"Number of finished trials: {len(study.trials)}")
-    print("\n🏆 Best trial:")
+    print("\n Best trial:")
     trial = study.best_trial
     print(f"  Value (Pearson r): {trial.value:.4f}")
     print("\n  Best Parameters:")

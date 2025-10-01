@@ -288,6 +288,24 @@ class Configurable(object):
     def contrastive_temperature(self):
         return self._config.getfloat('Contrastive', 'contrastive_temperature')
 
+    # ------------Global Image Caching config reader--------------------
+    @property
+    def use_global_image_cache(self):
+        """
+        Enable global image cache for K-fold cross-validation.
+
+        When enabled:
+        - All training images are loaded once at startup
+        - Cache is shared across all folds (5x faster for 5-fold CV)
+        - Memory usage: ~500-600 MB for 1200 images (224x224)
+
+        Recommended: True for training, False if system memory < 8GB
+        """
+        try:
+            return self._config.getboolean('Data', 'use_global_image_cache')
+        except:
+            return False  # Default to False for safety (backward compatible)
+
     # ------------Implant Removal config reader--------------------
     @property
     def remove_implants(self):

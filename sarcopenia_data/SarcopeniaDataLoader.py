@@ -34,7 +34,22 @@ if not isdir(TMP_DIR):
 # CSV-based dataset for regression tasks
 class SarcopeniaCSVDataSet(Dataset):
     def __init__(self, csv_data, input_size=(224, 224), augment=True, text_only=False, contrastive_mode=False,
-                 remove_implants=False, implant_threshold=240, removal_strategy='gaussian_noise'):
+                 remove_implants=False, implant_threshold=240, removal_strategy='gaussian_noise',
+                 shared_cache=None):  # Global image cache (optional)
+        """
+        CSV-based dataset for sarcopenia regression.
+
+        Args:
+            csv_data: pandas DataFrame with patient data
+            input_size: Target image dimensions (height, width)
+            augment: Whether to apply data augmentation
+            text_only: If True, only load clinical features (no images)
+            contrastive_mode: Enable contrastive learning (return two augmented views)
+            remove_implants: Enable metal implant removal preprocessing
+            implant_threshold: Intensity threshold for implant detection (200-250)
+            removal_strategy: Method for implant removal ('gaussian_noise', 'zero', 'mean', etc.)
+            shared_cache: GlobalImageCache instance for sharing images across folds
+        """
         self.input_x = input_size[0]
         self.input_y = input_size[1]
         self.augment = augment
@@ -55,7 +70,10 @@ class SarcopeniaCSVDataSet(Dataset):
             self.implant_detector = None
             if remove_implants and not IMPLANT_DETECTOR_AVAILABLE:
                 print("Warning: Implant removal requested but ImplantDetector not available.")
-        
+
+        # === Global image cache (shared across folds) ===
+        self.shared_cache = shared_cache
+
         print(f'Load CSV samples: {len(self.data)}')
         if ASMI in self.data.columns:
             asmi_values = self.data[ASMI].values
@@ -119,15 +137,30 @@ class SarcopeniaCSVDataSet(Dataset):
         row = self.data.iloc[index] # 這個被取出來的 row，它的資料型別是 pandas Series。可以想成key:value的字典
 
         # Load image
-        if not self.text_only and PATH in row:
-            img_path = row[PATH]
+        if not self.text_only and PATH in row and pd.notna(row[PATH]):
+            original_path = row[PATH]  # Keep original path for cache lookup
+            img_path = original_path
+
             # Adjust path for relative execution (e.g., from driver/reg_driver/)
             if not os.path.isabs(img_path) and not os.path.exists(img_path):
                 # Try with ../../ prefix for execution from driver/reg_driver/
                 potential_path = os.path.join("../../", img_path)
                 if os.path.exists(potential_path):
                     img_path = potential_path
-            original_image = self.load_dicom_image(img_path)
+
+            # === Use global cache if available, otherwise load from disk ===
+            if self.shared_cache is not None:
+                # Use ORIGINAL path as key (cache stores with original paths)
+                cached = self.shared_cache.get(original_path)
+                if cached is not None:
+                    # Load from global cache (fast! shared across all folds)
+                    original_image = cached.clone()  # clone() to avoid in-place modifications
+                else:
+                    # Fallback: load from disk if not in cache (rare edge case)
+                    original_image = self.load_dicom_image(img_path)
+            else:
+                # No cache: load from disk every time (slower)
+                original_image = self.load_dicom_image(img_path)
 
             # Apply augmentation if specified
             if self.augment:
