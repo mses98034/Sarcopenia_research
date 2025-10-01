@@ -1,22 +1,14 @@
 import sys
 import os
-import re
-sys.path.extend(["../../", "../", "./"])
-import numpy as np
-from os import fsync
-from commons.constant import *
-
-if not os.path.isdir(TMP_DIR):
-    os.makedirs(TMP_DIR)
 
 class Logger(object):
+    """A logger that writes to console and file, handling encoding issues gracefully."""
     def __init__(self, fpath=None):
         self.console = sys.stdout
         self.file = None
+        # Always open the log file with UTF-8 for full character support.
         if fpath is not None:
             self.file = open(fpath, 'w', encoding='utf-8')
-        # Check if the console supports UTF-8. If not, enable emoji stripping.
-        self.strip_emoji = sys.stdout.encoding.lower() not in ('utf-8', 'utf8')
 
     def __del__(self):
         self.close()
@@ -28,36 +20,36 @@ class Logger(object):
         self.close()
 
     def write(self, msg):
-        processed_msg = msg
-        if self.strip_emoji:
-            # Regex to remove a wide range of emojis and symbols for compatibility
-            emoji_pattern = re.compile(
-                "["
-                "\U0001F600-\U0001F64F"  # emoticons
-                "\U0001F300-\U0001F5FF"  # symbols & pictographs
-                "\U0001F680-\U0001F6FF"  # transport & map symbols
-                "\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                "\u2600-\u26FF"          # miscellaneous symbols
-                "\u2700-\u27BF"          # dingbats
-                "\uFE0F"                # variation selector
-                "]+", flags=re.UNICODE)
-            processed_msg = emoji_pattern.sub(r'', msg)
-
-        self.console.write(processed_msg)
+        """ Overloads default write function to log to both console and file """
+        # 1. Write the original, unmodified message to the log file (which is UTF-8).
         if self.file is not None:
-            self.file.write(processed_msg)
+            self.file.write(msg)
+
+        # 2. For the console, create a safe version of the message.
+        # Encode the string to the console's encoding, replacing any characters
+        # that don't exist in that encoding with a placeholder (e.g., '?').
+        # This prevents UnicodeEncodeError on legacy terminals like Windows' cp950.
+        console_encoding = self.console.encoding or 'utf-8'
+        safe_msg = msg.encode(console_encoding, errors='replace').decode(console_encoding)
+        self.console.write(safe_msg)
+        
         self.flush()
 
     def flush(self):
         self.console.flush()
         if self.file is not None:
             self.file.flush()
-            fsync(self.file.fileno())
+            # Check if fileno is available before calling fsync, as it might not be in some environments
+            try:
+                os.fsync(self.file.fileno())
+            except (IOError, OSError):
+                pass # Ignore fsync errors (e.g., on pipes)
 
     def close(self):
-        self.console.close()
         if self.file is not None:
-            self.file.close()
+            # Check if the file is already closed before trying to close it.
+            if not self.file.closed:
+                self.file.close()
 
 # Score measure
 

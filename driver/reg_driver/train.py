@@ -538,6 +538,22 @@ def main_train(config, seed=111):
             'history': fold_history
         }
         all_fold_results.append(fold_result)
+
+        # --- TUNING REPORT ---
+        # Print a machine-readable report for the tuning script to capture
+        try:
+            report_data = {
+                "fold": fold + 1,
+                "pearson": fold_result['final_val_metrics']['pearson'],
+                "val_loss": fold_result['best_val_loss']
+            }
+            import json
+            print(f"[TUNING_REPORT] {json.dumps(report_data)}")
+        except (KeyError, ImportError):
+            # Fail silently if keys are not found or json is not available
+            pass
+        # --- END TUNING REPORT ---
+
         
         fold_complete_msg = f"Fold {fold + 1} completed - Best Val Loss: {best_val_loss:.4f}"
         # Display metrics from the actual best epoch, not recomputed metrics
