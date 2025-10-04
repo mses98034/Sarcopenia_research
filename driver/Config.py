@@ -109,6 +109,14 @@ class Configurable(object):
     def log_file(self):
         return self._config.get('Save', 'log_file')
 
+    @property
+    def best_model_path(self):
+        return self._config.get('Save', 'best_model_path')
+
+    @property
+    def test_output_dir(self):
+        return self._config.get('Save', 'test_output_dir')
+
     # ------------Network path config reader--------------------
 
     @property
@@ -154,6 +162,10 @@ class Configurable(object):
     @property
     def epochs(self):
         return self._config.getint('Run', 'n_epochs')
+
+    @property
+    def val_batch_size(self):
+        return self._config.getint('Run', 'val_batch_size')
 
     @property
     def test_batch_size(self):
@@ -287,6 +299,13 @@ class Configurable(object):
     @property
     def contrastive_temperature(self):
         return self._config.getfloat('Contrastive', 'contrastive_temperature')
+
+    @property
+    def train_cam_generator(self):
+        try:
+            return self._config.getboolean('Contrastive', 'train_cam_generator')
+        except:
+            return False  # 默認凍結（向後兼容）
 
     # ------------Global Image Caching config reader--------------------
     @property

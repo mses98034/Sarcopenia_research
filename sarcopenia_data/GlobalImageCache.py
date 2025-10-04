@@ -69,7 +69,7 @@ class GlobalImageCache:
             input_size: Target image size (height, width)
             load_images: Whether to immediately load images into cache
         """
-        self._cache: Dict[str, torch.Tensor] = {}
+        self._cache: Dict[str, torch.Tensor] = {} # key:value -> img_path:image_tensor
         self._input_size = input_size
 
         if load_images:
@@ -105,7 +105,7 @@ class GlobalImageCache:
 
         # Create temporary dataset instance to use its load_dicom_image method
         temp_dataset = SarcopeniaCSVDataSet(
-            csv_data=csv_data.head(1),  # Dummy data for initialization
+            csv_data=csv_data.head(1),  # Dummy data for initialization -> 目的只是要後續使用SarcopeniaCSVDataSet寫好的 load_dicom_image
             input_size=self._input_size,
             augment=False,
             text_only=False
@@ -117,7 +117,7 @@ class GlobalImageCache:
             try:
                 # Adjust path for relative execution (same logic as SarcopeniaCSVDataSet)
                 adjusted_path = img_path
-                if not os.path.isabs(img_path) and not os.path.exists(img_path):
+                if not os.path.isabs(img_path) and not os.path.exists(img_path): # 檢查 img_path 不是一個絕對路徑 & 檢查使用 img_path 這個相對路徑，在當前工作目錄下找不到檔案
                     # Try with ../../ prefix for execution from driver/reg_driver/
                     potential_path = os.path.join("../../", img_path)
                     if os.path.exists(potential_path):
@@ -127,7 +127,7 @@ class GlobalImageCache:
                 img_tensor = temp_dataset.load_dicom_image(adjusted_path)
 
                 # Cache with ORIGINAL path as key (for consistency with dataset lookup)
-                self._cache[img_path] = img_tensor
+                self._cache[img_path] = img_tensor # 把 key:value 指定好
             except Exception as e:
                 failed_count += 1
                 if failed_count <= 5:  # Only show first 5 errors
@@ -192,7 +192,7 @@ class GlobalImageCache:
         when the training script ends.
         """
         self._cache.clear()
-        print(f"🧹 Global image cache cleared")
+        print(f" Global image cache cleared")
 
     def get_summary(self) -> Dict[str, any]:
         """

@@ -56,6 +56,8 @@ class ResNetFusionAttentionNetRegression(ResNetFusionTextNetRegression):
         if self.cam_enhancement:
             self.cam_generator.to(x.device)
             try:
+                # CAM generator may be frozen or trainable (controlled by train_cam_generator config)
+                # Gradient flow is allowed regardless for visualization (plot.py GradCAM)
                 scores = self.cam_generator(x)
                 activation_map = self.cam_extractor(class_idx=0, scores=scores)
                 Xm = activation_map[0]

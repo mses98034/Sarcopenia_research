@@ -126,9 +126,9 @@ class RegHelper(BaseTrainHelper):
         )
         
         val_loader = DataLoader(
-            val_dataset, 
-            batch_size=self.config.test_batch_size,
-            shuffle=False, 
+            val_dataset,
+            batch_size=self.config.val_batch_size,
+            shuffle=False,
             num_workers=self.config.workers,
             collate_fn=collate_fn
         )
@@ -151,7 +151,7 @@ class RegHelper(BaseTrainHelper):
             remove_implants=self.config.remove_implants,
             implant_threshold=self.config.implant_threshold,
             removal_strategy=self.config.removal_strategy,
-            cache_images=False  # Test set typically doesn't need caching (single pass)
+            shared_cache=None  # Test set doesn't use shared cache
         )
         
         collate_fn = self.merge_batch_regression

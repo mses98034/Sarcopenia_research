@@ -77,10 +77,10 @@ def train_epoch_contrastive(model, train_loader, optimizer, criterion, device, c
         optimizer.zero_grad()
 
         # Single forward pass, get both regression predictions and contrastive features
-        outputs, z_i = model(batch_images, text=batch_texts, text_included=True)
+        outputs, z_i = model(batch_images, text=batch_texts, text_included=config.use_text_features)
 
         # --- Calculate Combined Loss ---
-        # 1. Regression loss (MSE): only for first version of images
+        # 1. Regression loss : only for first version of images
         regression_outputs = outputs[:images1.size(0)].squeeze()
         if regression_outputs.dim() == 0:
             regression_outputs = regression_outputs.unsqueeze(0)
@@ -150,10 +150,10 @@ def train_epoch(model, train_loader, optimizer, criterion, device, config):
                 batch[key] = batch[key].to(device)
         
         optimizer.zero_grad()
-        
+
         # Forward pass
         if hasattr(model, 'forward') and 'text_included' in model.forward.__code__.co_varnames:
-            outputs, _ = model(batch['image_patch'], batch['image_text'], text_included=True)
+            outputs, _ = model(batch['image_patch'], batch['image_text'], text_included=config.use_text_features)
         else:
             outputs = model(batch['image_patch'])
         
@@ -195,7 +195,7 @@ def train_epoch(model, train_loader, optimizer, criterion, device, config):
 
     return avg_loss, {'mae': mae, 'mse': mse, 'r2': r2}
 
-def validate_epoch(model, val_loader, criterion, device):
+def validate_epoch(model, val_loader, criterion, device, config):
     """Validate for one epoch"""
     model.eval()
     total_loss = 0.0
@@ -212,7 +212,7 @@ def validate_epoch(model, val_loader, criterion, device):
             
             # Forward pass
             if hasattr(model, 'forward') and 'text_included' in model.forward.__code__.co_varnames:
-                outputs, _ = model(batch['image_patch'], batch['image_text'], text_included=True)
+                outputs, _ = model(batch['image_patch'], batch['image_text'], text_included=config.use_text_features)
             else:
                 outputs = model(batch['image_patch'])
             
@@ -250,29 +250,37 @@ def validate_epoch(model, val_loader, criterion, device):
     
     return avg_loss, {'mae': mae, 'mse': mse, 'r2': r2, 'pearson': pearson_r}, predictions, targets, uids
 
-def print_cv_summary(all_fold_results):
-    """Print cross-validation summary statistics"""
-    print(f"\n{'='*80}")
-    print("CROSS-VALIDATION SUMMARY")
-    print(f"{'='*80}")
-    
+def print_cv_summary(all_fold_results, reg_help):
+    """Print cross-validation summary statistics and write to log"""
+    summary_lines = []
+    summary_lines.append(f"\n{'='*80}")
+    summary_lines.append("CROSS-VALIDATION SUMMARY")
+    summary_lines.append(f"{'='*80}")
+
     # Extract metrics from all folds
     val_losses = [result['best_val_loss'] for result in all_fold_results]
     mae_scores = [result['final_val_metrics']['mae'] for result in all_fold_results]
     r2_scores = [result['final_val_metrics']['r2'] for result in all_fold_results]
     pearson_scores = [result['final_val_metrics']['pearson'] for result in all_fold_results]
-    
+
     # Calculate statistics
-    print(f"Validation Loss - Mean: {np.mean(val_losses):.4f} ± {np.std(val_losses):.4f}")
-    print(f"MAE            - Mean: {np.mean(mae_scores):.4f} ± {np.std(mae_scores):.4f}")
-    print(f"R²             - Mean: {np.mean(r2_scores):.4f} ± {np.std(r2_scores):.4f}")
-    print(f"Pearson r      - Mean: {np.mean(pearson_scores):.4f} ± {np.std(pearson_scores):.4f}")
-    
-    print("\\nPer-fold Results:")
-    print("Fold | Val Loss | MAE     | R²      | Pearson")
-    print("-" * 45)
+    summary_lines.append(f"Validation Loss - Mean: {np.mean(val_losses):.4f} ± {np.std(val_losses):.4f}")
+    summary_lines.append(f"MAE            - Mean: {np.mean(mae_scores):.4f} ± {np.std(mae_scores):.4f}")
+    summary_lines.append(f"R2             - Mean: {np.mean(r2_scores):.4f} ± {np.std(r2_scores):.4f}")
+    summary_lines.append(f"Pearson r      - Mean: {np.mean(pearson_scores):.4f} ± {np.std(pearson_scores):.4f}")
+
+    summary_lines.append("\\nPer-fold Results:")
+    summary_lines.append("Fold | Val Loss | MAE     | R2      | Pearson")
+    summary_lines.append("-" * 45)
     for i, result in enumerate(all_fold_results):
-        print(f"{i+1:4d} | {result['best_val_loss']:8.4f} | {result['final_val_metrics']['mae']:7.4f} | {result['final_val_metrics']['r2']:7.4f} | {result['final_val_metrics']['pearson']:7.4f}")
+        summary_lines.append(f"{i+1:4d} | {result['best_val_loss']:8.4f} | {result['final_val_metrics']['mae']:7.4f} | {result['final_val_metrics']['r2']:7.4f} | {result['final_val_metrics']['pearson']:7.4f}")
+
+    # Print to console and write to log
+    for line in summary_lines:
+        print(line)
+        reg_help.log.write(line + "\n")
+
+    reg_help.log.flush()
 
 
 
@@ -348,8 +356,6 @@ def main_train(config, seed=111):
     print(f"Data augmentation: AutoAugment enabled for training")
     
     from torch.optim.lr_scheduler import ReduceLROnPlateau, CosineAnnealingLR
-
-    # ... (omitting optimizer setup for brevity)
 
     # Setup scheduler using configuration
     if config.scheduler_type == 'cosine':
@@ -444,7 +450,7 @@ def main_train(config, seed=111):
             }
 
             # Add algorithm-specific parameters
-            if config.learning_algorithm == 'adam':
+            if config.learning_algorithm in ['adam', 'adamw']:
                 optimizer_kwargs.update({
                     'eps': config.epsilon,
                     'betas': (config.beta1, config.beta2)
@@ -480,7 +486,7 @@ def main_train(config, seed=111):
                 train_loss, train_metrics = train_epoch(model, train_loader, optimizer, criterion, device, config)
             
             # Validate
-            val_loss, val_metrics, _, _, _ = validate_epoch(model, val_loader, criterion, device)
+            val_loss, val_metrics, _, _, _ = validate_epoch(model, val_loader, criterion, device, config)
             
             # Update scheduler based on its type
             old_lr = optimizer.param_groups[0]['lr']
@@ -519,13 +525,12 @@ def main_train(config, seed=111):
 
                 combined_msg = f"{epoch_msg}\n{train_msg}\n{val_msg}"
                 reg_help.log.write(combined_msg + "\n")
-                # Check validation loss improvement
+                # Check validation loss improvement (compare with best, not previous)
                 if epoch > 1:
-                    prev_val_loss = fold_history[-2]['val_loss'] if len(fold_history) >= 2 else float('inf')
-                    if val_loss < prev_val_loss:
-                        reg_help.log.write(f"  ✅ Val loss improved: {prev_val_loss:.4f} → {val_loss:.4f}\n")
+                    if val_loss < best_val_loss:
+                        reg_help.log.write(f"  ✅ Val loss improved: {best_val_loss:.4f} → {val_loss:.4f} (new best!)\n")
                     else:
-                        reg_help.log.write(f"  ⚠️  Val loss increased: {prev_val_loss:.4f} → {val_loss:.4f}\n")
+                        reg_help.log.write(f"  ⚠️  Val loss: {val_loss:.4f} (best: {best_val_loss:.4f})\n")
             
             # Early stopping, only if enabled in config
             if config.early_stopping:
@@ -565,7 +570,7 @@ def main_train(config, seed=111):
         
         # Get final predictions for scatter plot
         model.load_state_dict(best_model_state)
-        _, final_val_metrics, final_predictions, final_targets, final_uids = validate_epoch(model, val_loader, criterion, device)
+        _, final_val_metrics, final_predictions, final_targets, final_uids = validate_epoch(model, val_loader, criterion, device, config)
 
         # Store fold results
         fold_result = {
@@ -585,17 +590,17 @@ def main_train(config, seed=111):
         # --- TUNING REPORT ---
         # Print a machine-readable report for the tuning script to capture
         try:
+            # Use the metrics from the best epoch for consistency
             report_data = {
                 "fold": fold + 1,
-                "pearson": float(fold_metadata['final_val_metrics']['pearson']),  # Convert to Python float
-                "val_loss": float(fold_metadata['best_val_loss'])                  # Convert to Python float
+                "pearson": best_epoch_metrics['val_metrics']['pearson'],
+                "val_loss": best_epoch_metrics['val_loss']
             }
             import json
             print(f"[TUNING_REPORT] {json.dumps(report_data)}")
         except (KeyError, ImportError, TypeError):
             # Fail silently if keys are not found or json is not available
             pass
-        # --- END TUNING REPORT ---
 
 
         fold_complete_msg = f"Fold {fold + 1} completed - Best Val Loss: {best_val_loss:.4f}"
@@ -615,14 +620,18 @@ def main_train(config, seed=111):
             overall_best_loss = best_val_loss
             overall_best_model_state = best_model_state.copy()
             overall_best_fold = fold
-            reg_help.log.write(f"🏆 New overall best model found in fold {fold + 1} with val_loss: {best_val_loss:.4f}\n")
+            reg_help.log.write(
+                f"🏆 New overall best model found in fold {fold + 1}\n"
+                f"   Val Loss: {best_val_loss:.4f} | MAE: {best_epoch_metrics['val_metrics']['mae']:.4f} | "
+                f"R²: {best_epoch_metrics['val_metrics']['r2']:.4f} | Pearson: {best_epoch_metrics['val_metrics']['pearson']:.4f}\n"
+            )
 
         # Explicitly free memory (AFTER saving best model)
         del final_predictions, final_targets, final_uids, best_model_state
         torch.cuda.empty_cache()
     
     # Print cross-validation summary
-    print_cv_summary(all_fold_results)
+    print_cv_summary(all_fold_results, reg_help)
 
     # Save overall best model
     if overall_best_model_state is not None:
@@ -633,10 +642,19 @@ def main_train(config, seed=111):
     else:
         reg_help.log.write("⚠️ Warning: No best model found to save\n")
 
+    # === Load complete fold results from disk for analysis ===
+    print("\n Preparing data for CSV generation...")
+    reg_help.log.write("\n📊 Loading fold results from disk for analysis...\n")
+    complete_fold_results = fold_manager.load_all_results()
+
     # Initialize analysis helper and save CSV data
+    print(" Saving training data to CSV files...")
     reg_help.log.write("\n📊 Saving training data to CSV files...\n")
     analysis_helper = AnalysisHelper(config)
-    analysis_helper.save_training_csv_data(all_fold_results, config.save_dir, reg_help, best_fold_idx=overall_best_fold)
+    analysis_helper.save_training_csv_data(complete_fold_results, config.save_dir, reg_help, best_fold_idx=overall_best_fold)
+
+    # Clean up temporary fold data files
+    fold_manager.cleanup()
 
     reg_help.log.write(f"\n🎉 Training completed!\n")
     reg_help.log.write(f"📁 Results saved to: {config.save_dir}\n")

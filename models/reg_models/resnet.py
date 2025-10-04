@@ -111,10 +111,17 @@ class ResNetFusionTextNetRegression(BaseModel):
             # Fallback for older torchvision versions
             self.cam_generator = models.resnet18(pretrained=use_pretrained)
 
-        # Set generator to eval mode and freeze all parameters
+        # CAM Generator training control
+        self.train_cam_generator = getattr(config, 'train_cam_generator', False) if config else False
+
+        # Always use eval mode for stable BatchNorm (using ImageNet global statistics)
         self.cam_generator.eval()
-        # for param in self.cam_generator.parameters():
-        #     param.requires_grad = False
+
+        if not self.train_cam_generator:
+            # Freeze mode: requires_grad=False (weights won't be updated)
+            for param in self.cam_generator.parameters():
+                param.requires_grad = False
+        # Otherwise: requires_grad=True (weights can be updated, but BatchNorm still uses global stats)
 
         # Initialize SmoothGradCAMpp extractor, bound to generator's last conv block ('layer4')
         self.cam_extractor = SmoothGradCAMpp(self.cam_generator, 'layer4')
@@ -135,8 +142,9 @@ class ResNetFusionTextNetRegression(BaseModel):
             self.cam_generator.to(x.device)
 
             try:
-                # 1. Use frozen generator to generate coarse attention map (Xm)
-                # Note: CAM extraction requires gradients, so we don't use no_grad here
+                # 1. Use CAM generator to generate coarse attention map (Xm)
+                # Note: CAM generator may be frozen or trainable (controlled by train_cam_generator config)
+                # Gradient flow is allowed regardless for visualization (plot.py GradCAM)
                 scores = self.cam_generator(x)
 
                 # 2. Extract CAM. For regression task, model has single output, so class_idx fixed to 0

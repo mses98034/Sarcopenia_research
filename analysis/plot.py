@@ -5,7 +5,7 @@ Reads CSV files from training logs and generates visualizations
 """
 
 import sys
-sys.path.extend(["../../", "../", "./"])
+sys.path.extend(["../", "./"])
 import os
 import argparse
 import pandas as pd
@@ -642,6 +642,11 @@ n = {len(actual)} samples"""
         for param in model.parameters():
             param.requires_grad_(True)
 
+        # Re-freeze CAM generator parameters (they were unfrozen by the above loop)
+        if hasattr(model, 'cam_generator'):
+            for param in model.cam_generator.parameters():
+                param.requires_grad_(False)
+
         # --- 5. 創建畫布 - 生成 2 行熱圖：Overall Model 和 CAM Generator ---
         fig, axs = plt.subplots(2, num_samples, figsize=(6 * num_samples, 12))
 
@@ -666,20 +671,29 @@ n = {len(actual)} samples"""
                 text_tensor = torch.from_numpy(clinical_data).unsqueeze(0).unsqueeze(0).to(device)
 
                 # --- 生成兩種梯度導向的熱圖：Overall Model 和 CAM Generator ---
+                # Reset model gradient state for each sample
                 model.zero_grad()
+                # Clear any cached gradients
+                torch.cuda.empty_cache() if torch.cuda.is_available() else None
+
                 with torch.enable_grad():
                     # === 1. Overall Model Heatmap (手動實現梯度CAM) ===
                     # 前向傳播並記錄backbone.layer4的特徵
                     activations = {}
                     def hook_layer4(module, input, output):
-                        output.requires_grad_(True)  # 確保輸出需要梯度
-                        output.retain_grad()  # 保留非葉子節點的梯度
-                        activations['layer4'] = output
+                        # Only retain grad if output actually requires grad
+                        if output.requires_grad:
+                            output.retain_grad()  # 保留非葉子節點的梯度
+                            activations['layer4'] = output
+                        else:
+                            # If output doesn't require grad, store it anyway but warn
+                            activations['layer4'] = output
+                            print(f"Warning: layer4 output doesn't require grad for UID {uid}")
 
                     # 註冊hook到backbone.layer4
                     hook_handle = model.backbone.layer4.register_forward_hook(hook_layer4)
 
-                    # 前向傳播完整模型
+                    # 前向傳播完整模型（保持模型的 CAM enhancement 設定）
                     text_included = config.use_text_features
                     model_output = model(image_tensor, text_tensor, text_included=text_included)
                     regression_score = model_output[0]  # 獲取回歸輸出
@@ -729,14 +743,28 @@ n = {len(actual)} samples"""
                     # 確保 CAM generator 在正確的裝置上
                     model.cam_generator.to(device)
 
-                    # 使用 CAM generator 生成 scores (獨立分析)
-                    generator_scores = model.cam_generator(image_tensor)
+                    # 固定隨機種子確保 SmoothGradCAMpp 的可重現性
+                    torch.manual_seed(42)
+                    np.random.seed(42)
+                    if torch.cuda.is_available():
+                        torch.cuda.manual_seed(42)
 
-                    # 使用 SmoothGradCAMpp 提取 CAM generator 的 activation map
-                    generator_activation_map = model.cam_extractor(class_idx=0, scores=generator_scores)
-                    if len(generator_activation_map) == 0:
-                        raise RuntimeError("CAM Generator extractor returned empty list")
-                    generator_cam = generator_activation_map[0]  # CAM generator的獨立特徵
+                    # SmoothGradCAMpp 需要 gradient 來註冊 hook，所以使用 enable_grad
+                    with torch.enable_grad():
+                        # 確保 image_tensor 需要 gradient
+                        image_tensor.requires_grad_(True)
+
+                        # 使用 CAM generator 生成 scores (獨立分析)
+                        generator_scores = model.cam_generator(image_tensor)
+
+                        # 使用 SmoothGradCAMpp 提取 CAM generator 的 activation map
+                        generator_activation_map = model.cam_extractor(class_idx=0, scores=generator_scores)
+                        if len(generator_activation_map) == 0:
+                            raise RuntimeError("CAM Generator extractor returned empty list")
+                        generator_cam = generator_activation_map[0]  # CAM generator的獨立特徵
+
+                        # 清理 gradients 節省記憶體
+                        image_tensor.requires_grad_(False)
 
                     # 轉換為 numpy 並調整尺寸
                     generator_cam_np = generator_cam.squeeze().detach().cpu().numpy()
@@ -758,7 +786,11 @@ n = {len(actual)} samples"""
                 print(f"✅ Generated heatmap for UID: {uid}")
 
             except Exception as e:
+                import traceback
+                import sys
                 print(f"⚠️ Failed to generate heatmap for UID: {uid}: {e}")
+                print(f"Full traceback:")
+                traceback.print_exc(file=sys.stdout)
                 # 在兩個子圖中顯示錯誤信息
                 for row in range(2):
                     axs[row, i].text(0.5, 0.5, f"UID: {uid}\n[X] Heatmap generation failed\n{str(e)[:50]}...",
@@ -811,7 +843,7 @@ n = {len(actual)} samples"""
             return os.path.abspath(full_path)
 
         # Try with common prefixes
-        for prefix in ['../../', '../../../', '../../../../']:
+        for prefix in ['../', '../../', '../../../']:
             test_path = os.path.join(prefix, img_path)
             if os.path.exists(test_path):
                 return os.path.abspath(test_path)
@@ -826,8 +858,17 @@ n = {len(actual)} samples"""
 
         # 進行視窗化以增強對比度
         if 'WindowCenter' in dcm and 'WindowWidth' in dcm:
-            center = float(dcm.WindowCenter)
-            width = float(dcm.WindowWidth)
+            # Handle MultiValue (some DICOM files have multiple window settings)
+            center = dcm.WindowCenter
+            width = dcm.WindowWidth
+            if isinstance(center, pydicom.multival.MultiValue):
+                center = float(center[0])
+            else:
+                center = float(center)
+            if isinstance(width, pydicom.multival.MultiValue):
+                width = float(width[0])
+            else:
+                width = float(width)
             low = center - width / 2
             high = center + width / 2
             img = np.clip(img, low, high)
@@ -850,8 +891,17 @@ n = {len(actual)} samples"""
         img = dcm.pixel_array
         # 進行視窗化以增強對比度 (可選，但通常效果更好)
         if 'WindowCenter' in dcm and 'WindowWidth' in dcm:
-            center = float(dcm.WindowCenter)
-            width = float(dcm.WindowWidth)
+            # Handle MultiValue (some DICOM files have multiple window settings)
+            center = dcm.WindowCenter
+            width = dcm.WindowWidth
+            if isinstance(center, pydicom.multival.MultiValue):
+                center = float(center[0])
+            else:
+                center = float(center)
+            if isinstance(width, pydicom.multival.MultiValue):
+                width = float(width[0])
+            else:
+                width = float(width)
             low = center - width / 2
             high = center + width / 2
             img = np.clip(img, low, high)
@@ -954,7 +1004,7 @@ n = {len(actual)} samples"""
                 mask, stats = detector.detect_implants(gray_image, return_stats=True)
 
                 # Generate cleaned image
-                cleaned_image, _ = detector.remove_implants(gray_image, strategy='gaussian_noise', mask=mask)
+                cleaned_image, _ = detector.remove_implants(gray_image, strategy='inpaint', mask=mask)
 
                 # Store statistics
                 implant_stats.append({
