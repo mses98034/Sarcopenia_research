@@ -97,7 +97,8 @@ class AnalysisHelper:
                     'Height': row.get('Height', None),
                     'Weight': row.get('Weight', None),
                     'BMI': row.get('BMI', None),
-                    'ASMI': row.get(ASMI, None)
+                    'ASMI': row.get(ASMI, None),
+                    'Low_muscle_mass': row.get('Low_muscle_mass', None)
                 })
 
             patient_data_df = pd.DataFrame(patient_data)
@@ -166,7 +167,8 @@ class AnalysisHelper:
                     'Height': row.get('Height', None),
                     'Weight': row.get('Weight', None),
                     'BMI': row.get('BMI', None),
-                    'ASMI': row.get(ASMI, None)
+                    'ASMI': row.get(ASMI, None),
+                    'Low_muscle_mass': row.get('Low_muscle_mass', None)
                 })
 
             patient_data_df = pd.DataFrame(patient_data)

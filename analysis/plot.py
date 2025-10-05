@@ -410,54 +410,62 @@ n = {len(actual)} samples"""
         pred_data = self.data['validation_predictions'].copy()
         patient_data = self.data['patient_data'].copy()
 
-        # Merge on UID
-        merged_data = pred_data.merge(patient_data[['UID', 'Gender']], on='UID', how='left')
+        # Merge on UID to get Gender and Low_muscle_mass (ground truth)
+        merged_data = pred_data.merge(patient_data[['UID', 'Gender', 'Low_muscle_mass']], on='UID', how='left')
 
         if merged_data['Gender'].isna().any():
             print("⚠️ Warning: Some samples missing gender information")
             merged_data = merged_data.dropna(subset=['Gender'])
 
+        if 'Low_muscle_mass' not in merged_data.columns or merged_data['Low_muscle_mass'].isna().any():
+            print("⚠️ Warning: Low_muscle_mass column missing or has NaN values")
+            print("   Using fallback: calculating from actual_asmi (not recommended)")
+            # Fallback to old method if Low_muscle_mass is not available
+            def classify_sarcopenia_from_asmi(row):
+                asmi = row['actual_asmi']
+                gender = row['Gender']
+                if gender == 0:  # Male
+                    return 1 if asmi < 7.0 else 0
+                else:  # Female
+                    return 1 if asmi < 5.5 else 0
+            merged_data['actual_sarcopenia'] = merged_data.apply(classify_sarcopenia_from_asmi, axis=1)
+        else:
+            # CORRECT METHOD: Use Low_muscle_mass from CSV as ground truth
+            merged_data['actual_sarcopenia'] = merged_data['Low_muscle_mass'].astype(int)
+
         print(f"✅ Merged data: {len(merged_data)} samples")
         print(f"   - Males (Gender=0): {sum(merged_data['Gender'] == 0)}")
         print(f"   - Females (Gender=1): {sum(merged_data['Gender'] == 1)}")
 
-        # Apply sarcopenia classification thresholds
-        def classify_sarcopenia(row):
-            asmi = row['actual_asmi'] if 'actual_asmi' in row else row['ASMI']
+        # Calculate predicted binary labels from predicted_asmi + gender-specific thresholds
+        def classify_sarcopenia_from_predicted(row):
+            pred_asmi = row['predicted_asmi']
             gender = row['Gender']
-
             if gender == 0:  # Male
-                return 1 if asmi < 7.0 else 0
-            else:  # Female (gender == 1)
-                return 1 if asmi < 5.5 else 0
+                return 1 if pred_asmi < 7.0 else 0
+            else:  # Female
+                return 1 if pred_asmi < 5.5 else 0
 
-        # Apply classification to both actual and predicted ASMI
-        merged_data['actual_sarcopenia'] = merged_data.apply(
-            lambda row: classify_sarcopenia({'actual_asmi': row['actual_asmi'], 'Gender': row['Gender']}), axis=1
-        )
-        merged_data['predicted_sarcopenia'] = merged_data.apply(
-            lambda row: classify_sarcopenia({'actual_asmi': row['predicted_asmi'], 'Gender': row['Gender']}), axis=1
-        )
+        merged_data['predicted_sarcopenia'] = merged_data.apply(classify_sarcopenia_from_predicted, axis=1)
 
         # Calculate classification metrics
         y_true = merged_data['actual_sarcopenia']
         y_pred = merged_data['predicted_sarcopenia']
-        y_pred_proba = merged_data['predicted_asmi']  # Use continuous ASMI for ROC curve
 
         # Calculate metrics
         accuracy = accuracy_score(y_true, y_pred)
 
-        # For ROC curve, we need to convert ASMI scores to probabilities
-        # Higher ASMI = lower probability of sarcopenia
-        def asmi_to_sarcopenia_prob(asmi, gender):
+        # For ROC curve, calculate risk score as standardized distance from threshold
+        # Positive score = below threshold = sarcopenia risk
+        # This matches the methodology in publication_figures.py
+        def calculate_risk_score(asmi, gender):
             threshold = 7.0 if gender == 0 else 5.5
-            # Convert to probability (sigmoid-like transformation around threshold)
-            return 1 / (1 + np.exp(2 * (asmi - threshold)))
+            return threshold - asmi  # Positive = sarcopenia risk
 
-        y_pred_prob = [asmi_to_sarcopenia_prob(asmi, gender)
-                      for asmi, gender in zip(merged_data['predicted_asmi'], merged_data['Gender'])]
+        y_score = [calculate_risk_score(asmi, gender)
+                  for asmi, gender in zip(merged_data['predicted_asmi'], merged_data['Gender'])]
 
-        auc = roc_auc_score(y_true, y_pred_prob)
+        auc = roc_auc_score(y_true, y_score)
 
         # Generate classification report
         class_report = classification_report(y_true, y_pred, target_names=['Normal', 'Sarcopenia'], output_dict=True)
@@ -475,7 +483,7 @@ n = {len(actual)} samples"""
         ax1.set_ylabel('Actual')
 
         # 2. ROC Curve
-        fpr, tpr, _ = roc_curve(y_true, y_pred_prob)
+        fpr, tpr, _ = roc_curve(y_true, y_score)
         ax2.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {auc:.3f})')
         ax2.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--', alpha=0.8)
         ax2.set_xlim([0.0, 1.0])
