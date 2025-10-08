@@ -282,7 +282,7 @@ figure1_scatter_comparison <- function(train_data, test_data, output_dir) {
              fontface = "bold", color = "#D32F2F", family = "sans") +
     labs(x = "Actual ASMI (kg/m²)",
          y = "Predicted ASMI (kg/m²)",
-         title = "Internal validation") +
+         title = "5-Fold Cross validation") +
     theme_bw(base_size = 11) +
     theme(
       plot.title = element_text(face = "bold", hjust = 0.0, size = 20, color = "#D32F2F"),
@@ -415,7 +415,7 @@ figure2_bland_altman <- function(train_data, test_data, output_dir) {
              hjust = 0, vjust = 5.6, size = 4.5, fontface = "bold", color = "#D32F2F", family = "sans") +
     labs(x = "Mean of Actual and Predicted ASMI (kg/m²)",
          y = "Difference (Actual - Predicted)",
-         title = "Internal validation") +
+         title = "5-Fold Cross validation") +
     theme_bw(base_size = 11) +
     theme(
       plot.title = element_text(face = "bold", hjust = 0.0, size = 20, color = "#D32F2F"),
@@ -558,10 +558,10 @@ figure3_roc_comparison <- function(train_data, test_data, output_dir) {
 
   # Left panel: Training (Reference style)
   p1 <- ggplot(data = train_roc_df, aes(x = spec, y = sens)) +
-    geom_line(colour = col_list['internal'], size = 1) +
+    geom_line(colour = col_list['internal'], size = 2) +
     theme_bw() +
     coord_equal() +
-    labs(x = 'Specificity', y = 'Sensitivity', title='Internal validation') +
+    labs(x = 'Specificity', y = 'Sensitivity', title='5-Fold Cross validation') +
     # Threshold point (Reference style: shape 21, semi-transparent fill)
     annotate(geom = "point", x = train_threshold_spec, y = train_threshold_sens,
              shape = 21, size = 5, fill = paste0(col_list['internal'], 'A0'), color = '#000000') +
@@ -576,7 +576,7 @@ figure3_roc_comparison <- function(train_data, test_data, output_dir) {
 
   # Right panel: External test (Reference style)
   p2 <- ggplot(data = test_roc_df, aes(x = spec, y = sens)) +
-    geom_line(colour = col_list['external'], size = 1) +
+    geom_line(colour = col_list['external'], size = 2) +
     theme_bw() +
     coord_equal() +
     labs(x = 'Specificity', y = 'Sensitivity', title='External validation') +
@@ -680,7 +680,7 @@ figure4_metrics_table <- function(train_data, test_data, output_dir) {
   # Left panel: Cross-Validation (Coral theme)
   p1 <- ggplot(metrics_df, aes(x = Metric, y = Cross_Validation, fill = Metric)) +
     geom_bar(stat = "identity", alpha = 0.9, size = 0.8) + #, color = "#8B0000"
-    labs(title='Cross Validation')+
+    labs(title='5-Fold Cross validation')+
     geom_text(aes(label = sprintf("%.3f", Cross_Validation)),
               hjust = -0.15, size = 4.5, fontface = "bold", color = "#D32F2F") +
     scale_fill_manual(values = train_colors) +
@@ -908,13 +908,13 @@ figure6_subgroup_analysis <- function(train_data, test_data, output_dir) {
   }
 
   # Create plots for both datasets
-  p_train <- create_auc_barplot(train_all, "Internal validation set")
-  p_test <- create_auc_barplot(test_all, "External validation set")
+  p_train <- create_auc_barplot(train_all, "5-Fold Cross validation")
+  p_test <- create_auc_barplot(test_all, "External validation")
 
   # Layout using cowplot (Reference style)
   final_plot <- ggdraw() +
-    draw_plot(p_train, x = 0, y = 0, width = 0.5, height = 0.75) +
-    draw_plot(p_test, x = 0.5, y = 0, width = 0.5, height = 0.75)
+    draw_plot(p_train, x = 0, y = 0, width = 0.5, height = 1) +
+    draw_plot(p_test, x = 0.5, y = 0, width = 0.5, height = 1)
 
 
   # Save
@@ -988,7 +988,7 @@ figure8_confusion_matrix <- function(train_data, test_data, output_dir) {
     guides(fill = guide_colorbar(barheight = 10)) +
     labs(x = "Actual",
          y = "Predicted",
-         title = "Internal validation") +
+         title = "5-Fold Cross validation") +
     theme_minimal(base_size = 14) +
     theme(
       plot.title = element_text(face = "bold", hjust = 0.0, size = 20, color = "#D32F2F"),

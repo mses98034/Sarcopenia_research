@@ -10,7 +10,7 @@ test_filename = test.csv
 use_global_image_cache = True
 
 # Implant removal configuration -
-remove_implants = True
+remove_implants = False
 implant_threshold = 240
 removal_strategy = inpaint
 # Available strategies: zero, mean, gaussian_noise, inpaint, median_background

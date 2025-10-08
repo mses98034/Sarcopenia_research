@@ -1,0 +1,20 @@
+# Core deep learning frameworks
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Gradio web interface
+gradio>=4.0.0
+
+# Image processing
+opencv-python>=4.8.0
+Pillow>=10.0.0
+
+# Medical image handling
+pydicom>=2.3.0
+
+# Scientific computing
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Optional: For better performance
+# accelerate>=0.20.0  # Uncomment for faster model loading

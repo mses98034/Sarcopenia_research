@@ -755,7 +755,7 @@ class PublicationFigureGenerator:
                 actual_asmi = row['actual_asmi'] if 'actual_asmi' in row else row.get('ASMI', 'N/A')
                 pred_asmi = row['predicted_asmi']
                 axes[idx].set_title(f'Actual: {actual_asmi:.2f} | Predicted: {pred_asmi:.2f} kg/m²',
-                                   fontsize=12, fontweight='bold', fontfamily='sans') # UID: {uid}\n
+                                   fontsize=20, fontweight='bold', fontfamily='sans') # UID: {uid}\n
                 axes[idx].axis('off')
 
                 print(f"   ✅ Generated heatmap for UID: {uid}")
