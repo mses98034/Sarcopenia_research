@@ -1,0 +1,9 @@
+=== EXTERNAL TEST SET RESULTS ===
+
+Test Loss: 0.2530
+MAE: 0.4021
+MSE: 0.3075
+RMSE: 0.5545
+R²: 0.6451
+Pearson r: 0.8101
+Pearson p-value: 8.9997e-31

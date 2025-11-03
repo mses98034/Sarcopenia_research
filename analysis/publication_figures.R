@@ -883,7 +883,7 @@ figure6_subgroup_analysis <- function(train_data, test_data, output_dir) {
       col = subgroup_colors[Subgroup]
     )
 
-  # Create AUC bar plot (Reference 003. Stratified analysis style)
+  # Create AUC bar plot 
   create_auc_barplot <- function(data, title) {
     # Bar plot with error bars and text labels
     p <- ggplot(data, aes(x = x_pos, y = AUC, fill = col)) +
@@ -902,26 +902,61 @@ figure6_subgroup_analysis <- function(train_data, test_data, output_dir) {
                         labels = data$Subgroup) +
       theme(plot.title = element_text(color = "#000000", size = 20, hjust=0),
            legend.position = "none",
-           axis.text.x = element_text(color = "#000000", angle = 45, hjust = 1, size = 8))
+           axis.text.x = element_text(color = "#000000", angle = 45, hjust = 1, size = 12))
 
     return(p)
   }
 
-  # Create plots for both datasets
-  p_train <- create_auc_barplot(train_all, "5-Fold Cross validation")
-  p_test <- create_auc_barplot(test_all, "External validation")
+  # Create Pearson r bar plot (no error bars)
+  create_pearson_barplot <- function(data, title) {
+    # Format Pearson r values as text
+    data$Pearson_text <- sprintf("%.3f", data$Pearson_r)
 
-  # Layout using cowplot (Reference style)
+    # Bar plot with text labels (no error bars for Pearson r)
+    p <- ggplot(data, aes(x = x_pos, y = Pearson_r, fill = col)) +
+      geom_bar(position = "dodge", stat = "identity") +
+      # Vertical text labels at bar bottom
+      annotate(geom = "text", x = data$x_pos, y = 0.02, label = data$Pearson_text,
+              size = 5, color = "white", angle = 90, fontface = 2, hjust = 0) +
+      theme_classic() +
+      labs(title = title, x = '', y = 'Pearson r') +
+      scale_fill_manual(values = factor(data$col) %>% levels()) +
+      scale_y_continuous(expand = c(0, 0), limits = c(0, 1.0), breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1)) +
+      scale_x_continuous(limits = c(0.5, max(data$x_pos) + 0.5),
+                        breaks = data$x_pos,
+                        labels = data$Subgroup) +
+      theme(plot.title = element_text(color = "#000000", size = 20, hjust=0),
+           legend.position = "none",
+           axis.text.x = element_text(color = "#000000", angle = 45, hjust = 1, size = 12))
+
+    return(p)
+  }
+
+  # Create AUC plots for both datasets
+  p_train_auc <- create_auc_barplot(train_all, "5-Fold Cross validation")
+  p_test_auc <- create_auc_barplot(test_all, "External validation")
+
+  # Create Pearson r plots for both datasets
+  p_train_pearson <- create_pearson_barplot(train_all, "5-Fold Cross validation")
+  p_test_pearson <- create_pearson_barplot(test_all, "External validation")
+
+  # Layout using cowplot: (2, 2) grid
+  # Top row: Pearson r plots | Bottom row: AUC plots (SWAPPED)
   final_plot <- ggdraw() +
-    draw_plot(p_train, x = 0, y = 0, width = 0.5, height = 1) +
-    draw_plot(p_test, x = 0.5, y = 0, width = 0.5, height = 1)
+    # Top row: Pearson r (new position)
+    draw_plot(p_train_pearson, x = 0, y = 0.5, width = 0.5, height = 0.5) +
+    draw_plot(p_test_pearson, x = 0.5, y = 0.5, width = 0.5, height = 0.5) +
+    # Bottom row: AUC (new position)
+    draw_plot(p_train_auc, x = 0, y = 0, width = 0.5, height = 0.5) +
+    draw_plot(p_test_auc, x = 0.5, y = 0, width = 0.5, height = 0.5)
 
 
-  # Save
+  # Save with updated dimensions (2x2 grid requires double height)
   output_path <- file.path(output_dir, paste0("figure6_subgroup_analysis.", output_format))
-  ggsave(output_path, final_plot, width = 12, height = 6, dpi = output_dpi)
+  ggsave(output_path, final_plot, width = 12, height = 12, dpi = output_dpi)
 
   cat("   ✅ Figure 6 saved:", output_path, "\n")
+  cat("   Layout: 2x2 grid (AUC + Pearson r)\n")
 }
 
 ################################################################################

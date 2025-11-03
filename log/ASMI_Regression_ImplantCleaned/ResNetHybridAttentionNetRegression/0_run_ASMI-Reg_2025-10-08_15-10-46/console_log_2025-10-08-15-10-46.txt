@@ -1,0 +1,1537 @@
+=== TRAINING CONFIGURATION ===
+Device: mps
+Data name: ASMI_Regression_ImplantCleaned
+Image size: 224
+Random seed: 666
+Model: ResNetHybridAttentionNetRegression
+Backbone: resnet34
+Use pretrained: True
+Loss function: ccc
+Optimizer: adamw
+Learning rate: 7.502716214673233e-05
+Scheduler patience: 8
+Early stopping patience: 20
+Number of folds: 5
+Epochs: 80
+Batch size: 32
+Data augmentation: AutoAugment enabled for training
+
+=== GLOBAL IMAGE CACHE INITIALIZATION ===
+Global cache: 1140 images, 654.6 MB
+=== STARTING 5-FOLD CROSS-VALIDATION ===
+============================================================FOLD 1/5 - RESNET34============================================================\nFold 1 - Train samples: 912, Val samples: 228
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 1/80 (LR: 7.50e-05)
+  Train - Loss: 1.0372, MAE: 6.0071, R²: -34.0572
+  Val   - Loss: 0.9742, MAE: 6.3740, R²: -37.7612, Pearson: 0.6043
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 2/80 (LR: 7.50e-05)
+  Train - Loss: 0.9664, MAE: 5.4927, R²: -30.2854
+  Val   - Loss: 0.8533, MAE: 5.1135, R²: -30.4359, Pearson: 0.6248
+  ✅ Val loss improved: 0.9742 → 0.8533 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 3/80 (LR: 7.50e-05)
+  Train - Loss: 0.6788, MAE: 2.4964, R²: -8.8412
+  Val   - Loss: 0.4478, MAE: 0.7241, R²: 0.1389, Pearson: 0.6332
+  ✅ Val loss improved: 0.8533 → 0.4478 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 4/80 (LR: 7.50e-05)
+  Train - Loss: 0.3585, MAE: 0.6973, R²: 0.2703
+  Val   - Loss: 0.4461, MAE: 0.7151, R²: 0.2146, Pearson: 0.6663
+  ✅ Val loss improved: 0.4478 → 0.4461 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 5/80 (LR: 7.50e-05)
+  Train - Loss: 0.2825, MAE: 0.5614, R²: 0.5141
+  Val   - Loss: 0.4311, MAE: 0.6998, R²: 0.2396, Pearson: 0.6711
+  ✅ Val loss improved: 0.4461 → 0.4311 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 6/80 (LR: 7.50e-05)
+  Train - Loss: 0.2876, MAE: 0.5739, R²: 0.4823
+  Val   - Loss: 0.4103, MAE: 0.6509, R²: 0.2525, Pearson: 0.6775
+  ✅ Val loss improved: 0.4311 → 0.4103 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 7/80 (LR: 7.50e-05)
+  Train - Loss: 0.2723, MAE: 0.5414, R²: 0.5448
+  Val   - Loss: 0.4025, MAE: 0.6704, R²: 0.3287, Pearson: 0.6920
+  ✅ Val loss improved: 0.4103 → 0.4025 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 8/80 (LR: 7.50e-05)
+  Train - Loss: 0.2336, MAE: 0.4733, R²: 0.6496
+  Val   - Loss: 0.3958, MAE: 0.6356, R²: 0.3534, Pearson: 0.7104
+  ✅ Val loss improved: 0.4025 → 0.3958 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 9/80 (LR: 7.50e-05)
+  Train - Loss: 0.2274, MAE: 0.4739, R²: 0.6510
+  Val   - Loss: 0.3978, MAE: 0.5992, R²: 0.3650, Pearson: 0.6922
+  ⚠️  Val loss: 0.3978 (best: 0.3958)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 10/80 (LR: 7.50e-05)
+  Train - Loss: 0.2260, MAE: 0.4575, R²: 0.6642
+  Val   - Loss: 0.3939, MAE: 0.6100, R²: 0.3381, Pearson: 0.7217
+  ✅ Val loss improved: 0.3958 → 0.3939 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 11/80 (LR: 7.50e-05)
+  Train - Loss: 0.2370, MAE: 0.4930, R²: 0.5944
+  Val   - Loss: 0.3446, MAE: 0.5507, R²: 0.4788, Pearson: 0.7342
+  ✅ Val loss improved: 0.3939 → 0.3446 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 12/80 (LR: 7.50e-05)
+  Train - Loss: 0.2148, MAE: 0.4570, R²: 0.6785
+  Val   - Loss: 0.3777, MAE: 0.6181, R²: 0.3947, Pearson: 0.7453
+  ⚠️  Val loss: 0.3777 (best: 0.3446)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 13/80 (LR: 7.50e-05)
+  Train - Loss: 0.2393, MAE: 0.4935, R²: 0.6124
+  Val   - Loss: 0.3573, MAE: 0.5307, R²: 0.4718, Pearson: 0.7280
+  ⚠️  Val loss: 0.3573 (best: 0.3446)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 14/80 (LR: 7.50e-05)
+  Train - Loss: 0.2014, MAE: 0.4338, R²: 0.6991
+  Val   - Loss: 0.3648, MAE: 0.5356, R²: 0.4758, Pearson: 0.7128
+  ⚠️  Val loss: 0.3648 (best: 0.3446)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 15/80 (LR: 7.50e-05)
+  Train - Loss: 0.1707, MAE: 0.3933, R²: 0.7623
+  Val   - Loss: 0.3596, MAE: 0.5472, R²: 0.4953, Pearson: 0.7335
+  ⚠️  Val loss: 0.3596 (best: 0.3446)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 16/80 (LR: 7.50e-05)
+  Train - Loss: 0.2011, MAE: 0.4241, R²: 0.7148
+  Val   - Loss: 0.3994, MAE: 0.6550, R²: 0.3331, Pearson: 0.7071
+  ⚠️  Val loss: 0.3994 (best: 0.3446)
+  📊 Scheduler state: bad epochs 6/8, current LR: 7.50e-05
+Epoch 17/80 (LR: 7.50e-05)
+  Train - Loss: 0.2211, MAE: 0.4552, R²: 0.6778
+  Val   - Loss: 0.3762, MAE: 0.6088, R²: 0.3668, Pearson: 0.7073
+  ⚠️  Val loss: 0.3762 (best: 0.3446)
+  📊 Scheduler state: bad epochs 7/8, current LR: 7.50e-05
+Epoch 18/80 (LR: 7.50e-05)
+  Train - Loss: 0.2132, MAE: 0.4529, R²: 0.6813
+  Val   - Loss: 0.3698, MAE: 0.5959, R²: 0.4372, Pearson: 0.7234
+  ⚠️  Val loss: 0.3698 (best: 0.3446)
+  📊 Scheduler state: bad epochs 8/8, current LR: 7.50e-05
+Epoch 19/80 (LR: 7.50e-05)
+  Train - Loss: 0.1857, MAE: 0.4200, R²: 0.7237
+  Val   - Loss: 0.3597, MAE: 0.5284, R²: 0.4940, Pearson: 0.7251
+  ⚠️  Val loss: 0.3597 (best: 0.3446)
+  📉 Learning rate reduced: 7.50e-05 → 2.47e-05 (bad epochs: 0/8)
+Epoch 20/80 (LR: 2.47e-05)
+  Train - Loss: 0.2002, MAE: 0.4252, R²: 0.7202
+  Val   - Loss: 0.3638, MAE: 0.5917, R²: 0.4648, Pearson: 0.7527
+  ⚠️  Val loss: 0.3638 (best: 0.3446)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 21/80 (LR: 2.47e-05)
+  Train - Loss: 0.1914, MAE: 0.4116, R²: 0.7321
+  Val   - Loss: 0.3421, MAE: 0.5528, R²: 0.4928, Pearson: 0.7479
+  ✅ Val loss improved: 0.3446 → 0.3421 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 22/80 (LR: 2.47e-05)
+  Train - Loss: 0.1640, MAE: 0.3673, R²: 0.7795
+  Val   - Loss: 0.3380, MAE: 0.5141, R²: 0.5287, Pearson: 0.7444
+  ✅ Val loss improved: 0.3421 → 0.3380 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 23/80 (LR: 2.47e-05)
+  Train - Loss: 0.1541, MAE: 0.3584, R²: 0.7991
+  Val   - Loss: 0.3448, MAE: 0.5412, R²: 0.5031, Pearson: 0.7456
+  ⚠️  Val loss: 0.3448 (best: 0.3380)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 24/80 (LR: 2.47e-05)
+  Train - Loss: 0.1641, MAE: 0.3837, R²: 0.7700
+  Val   - Loss: 0.3472, MAE: 0.5212, R²: 0.5235, Pearson: 0.7433
+  ⚠️  Val loss: 0.3472 (best: 0.3380)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 25/80 (LR: 2.47e-05)
+  Train - Loss: 0.1609, MAE: 0.3512, R²: 0.8026
+  Val   - Loss: 0.3491, MAE: 0.5497, R²: 0.4846, Pearson: 0.7364
+  ⚠️  Val loss: 0.3491 (best: 0.3380)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 26/80 (LR: 2.47e-05)
+  Train - Loss: 0.1485, MAE: 0.3407, R²: 0.8163
+  Val   - Loss: 0.3343, MAE: 0.5168, R²: 0.5248, Pearson: 0.7445
+  ✅ Val loss improved: 0.3380 → 0.3343 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 27/80 (LR: 2.47e-05)
+  Train - Loss: 0.1533, MAE: 0.3557, R²: 0.8052
+  Val   - Loss: 0.3449, MAE: 0.5229, R²: 0.5175, Pearson: 0.7393
+  ⚠️  Val loss: 0.3449 (best: 0.3343)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 28/80 (LR: 2.47e-05)
+  Train - Loss: 0.1586, MAE: 0.3609, R²: 0.7888
+  Val   - Loss: 0.3354, MAE: 0.5096, R²: 0.5248, Pearson: 0.7445
+  ⚠️  Val loss: 0.3354 (best: 0.3343)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 29/80 (LR: 2.47e-05)
+  Train - Loss: 0.1547, MAE: 0.3468, R²: 0.8010
+  Val   - Loss: 0.3516, MAE: 0.5355, R²: 0.4998, Pearson: 0.7452
+  ⚠️  Val loss: 0.3516 (best: 0.3343)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 30/80 (LR: 2.47e-05)
+  Train - Loss: 0.1560, MAE: 0.3624, R²: 0.7977
+  Val   - Loss: 0.3311, MAE: 0.4971, R²: 0.5414, Pearson: 0.7503
+  ✅ Val loss improved: 0.3343 → 0.3311 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 31/80 (LR: 2.47e-05)
+  Train - Loss: 0.1461, MAE: 0.3406, R²: 0.8200
+  Val   - Loss: 0.3444, MAE: 0.5082, R²: 0.5261, Pearson: 0.7409
+  ⚠️  Val loss: 0.3444 (best: 0.3311)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 32/80 (LR: 2.47e-05)
+  Train - Loss: 0.1520, MAE: 0.3431, R²: 0.8121
+  Val   - Loss: 0.3331, MAE: 0.5065, R²: 0.5190, Pearson: 0.7487
+  ⚠️  Val loss: 0.3331 (best: 0.3311)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 33/80 (LR: 2.47e-05)
+  Train - Loss: 0.1412, MAE: 0.3273, R²: 0.8294
+  Val   - Loss: 0.3363, MAE: 0.5090, R²: 0.5326, Pearson: 0.7479
+  ⚠️  Val loss: 0.3363 (best: 0.3311)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.47e-05
+Epoch 34/80 (LR: 2.47e-05)
+  Train - Loss: 0.1531, MAE: 0.3455, R²: 0.8078
+  Val   - Loss: 0.3441, MAE: 0.5036, R²: 0.5420, Pearson: 0.7466
+  ⚠️  Val loss: 0.3441 (best: 0.3311)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.47e-05
+Epoch 35/80 (LR: 2.47e-05)
+  Train - Loss: 0.1397, MAE: 0.3292, R²: 0.8263
+  Val   - Loss: 0.3356, MAE: 0.4944, R²: 0.5423, Pearson: 0.7501
+  ⚠️  Val loss: 0.3356 (best: 0.3311)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.47e-05
+Epoch 36/80 (LR: 2.47e-05)
+  Train - Loss: 0.1442, MAE: 0.3367, R²: 0.8179
+  Val   - Loss: 0.3454, MAE: 0.5117, R²: 0.5335, Pearson: 0.7523
+  ⚠️  Val loss: 0.3454 (best: 0.3311)
+  📊 Scheduler state: bad epochs 7/8, current LR: 2.47e-05
+Epoch 37/80 (LR: 2.47e-05)
+  Train - Loss: 0.1527, MAE: 0.3471, R²: 0.8056
+  Val   - Loss: 0.3324, MAE: 0.4982, R²: 0.5300, Pearson: 0.7490
+  ⚠️  Val loss: 0.3324 (best: 0.3311)
+  📊 Scheduler state: bad epochs 8/8, current LR: 2.47e-05
+Epoch 38/80 (LR: 2.47e-05)
+  Train - Loss: 0.1465, MAE: 0.3476, R²: 0.8129
+  Val   - Loss: 0.3455, MAE: 0.5254, R²: 0.5241, Pearson: 0.7459
+  ⚠️  Val loss: 0.3455 (best: 0.3311)
+  📉 Learning rate reduced: 2.47e-05 → 8.14e-06 (bad epochs: 0/8)
+Epoch 39/80 (LR: 8.14e-06)
+  Train - Loss: 0.1468, MAE: 0.3442, R²: 0.8181
+  Val   - Loss: 0.3329, MAE: 0.4915, R²: 0.5449, Pearson: 0.7471
+  ⚠️  Val loss: 0.3329 (best: 0.3311)
+  📊 Scheduler state: bad epochs 1/8, current LR: 8.14e-06
+Epoch 40/80 (LR: 8.14e-06)
+  Train - Loss: 0.1490, MAE: 0.3447, R²: 0.8105
+  Val   - Loss: 0.3324, MAE: 0.4907, R²: 0.5393, Pearson: 0.7486
+  ⚠️  Val loss: 0.3324 (best: 0.3311)
+  📊 Scheduler state: bad epochs 2/8, current LR: 8.14e-06
+Epoch 41/80 (LR: 8.14e-06)
+  Train - Loss: 0.1376, MAE: 0.3247, R²: 0.8373
+  Val   - Loss: 0.3359, MAE: 0.5005, R²: 0.5458, Pearson: 0.7504
+  ⚠️  Val loss: 0.3359 (best: 0.3311)
+  📊 Scheduler state: bad epochs 3/8, current LR: 8.14e-06
+Epoch 42/80 (LR: 8.14e-06)
+  Train - Loss: 0.1463, MAE: 0.3440, R²: 0.8139
+  Val   - Loss: 0.3342, MAE: 0.4997, R²: 0.5456, Pearson: 0.7526
+  ⚠️  Val loss: 0.3342 (best: 0.3311)
+  📊 Scheduler state: bad epochs 0/8, current LR: 8.14e-06
+Epoch 43/80 (LR: 8.14e-06)
+  Train - Loss: 0.1514, MAE: 0.3496, R²: 0.8016
+  Val   - Loss: 0.3296, MAE: 0.4965, R²: 0.5442, Pearson: 0.7515
+  ✅ Val loss improved: 0.3311 → 0.3296 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 8.14e-06
+Epoch 44/80 (LR: 8.14e-06)
+  Train - Loss: 0.1457, MAE: 0.3414, R²: 0.8099
+  Val   - Loss: 0.3307, MAE: 0.5014, R²: 0.5409, Pearson: 0.7506
+  ⚠️  Val loss: 0.3307 (best: 0.3296)
+  📊 Scheduler state: bad epochs 2/8, current LR: 8.14e-06
+Epoch 45/80 (LR: 8.14e-06)
+  Train - Loss: 0.1399, MAE: 0.3318, R²: 0.8296
+  Val   - Loss: 0.3365, MAE: 0.5071, R²: 0.5375, Pearson: 0.7485
+  ⚠️  Val loss: 0.3365 (best: 0.3296)
+  📊 Scheduler state: bad epochs 3/8, current LR: 8.14e-06
+Epoch 46/80 (LR: 8.14e-06)
+  Train - Loss: 0.1333, MAE: 0.3141, R²: 0.8419
+  Val   - Loss: 0.3330, MAE: 0.4985, R²: 0.5452, Pearson: 0.7491
+  ⚠️  Val loss: 0.3330 (best: 0.3296)
+  📊 Scheduler state: bad epochs 4/8, current LR: 8.14e-06
+Epoch 47/80 (LR: 8.14e-06)
+  Train - Loss: 0.1466, MAE: 0.3343, R²: 0.8232
+  Val   - Loss: 0.3312, MAE: 0.5013, R²: 0.5456, Pearson: 0.7519
+  ⚠️  Val loss: 0.3312 (best: 0.3296)
+  📊 Scheduler state: bad epochs 5/8, current LR: 8.14e-06
+Epoch 48/80 (LR: 8.14e-06)
+  Train - Loss: 0.1313, MAE: 0.3126, R²: 0.8480
+  Val   - Loss: 0.3329, MAE: 0.5000, R²: 0.5481, Pearson: 0.7516
+  ⚠️  Val loss: 0.3329 (best: 0.3296)
+  📊 Scheduler state: bad epochs 6/8, current LR: 8.14e-06
+Epoch 49/80 (LR: 8.14e-06)
+  Train - Loss: 0.1386, MAE: 0.3187, R²: 0.8437
+  Val   - Loss: 0.3359, MAE: 0.5063, R²: 0.5341, Pearson: 0.7488
+  ⚠️  Val loss: 0.3359 (best: 0.3296)
+  📊 Scheduler state: bad epochs 7/8, current LR: 8.14e-06
+Epoch 50/80 (LR: 8.14e-06)
+  Train - Loss: 0.1385, MAE: 0.3203, R²: 0.8354
+  Val   - Loss: 0.3309, MAE: 0.4887, R²: 0.5528, Pearson: 0.7512
+  ⚠️  Val loss: 0.3309 (best: 0.3296)
+  📊 Scheduler state: bad epochs 0/8, current LR: 8.14e-06
+Epoch 51/80 (LR: 8.14e-06)
+  Train - Loss: 0.1429, MAE: 0.3296, R²: 0.8281
+  Val   - Loss: 0.3291, MAE: 0.4963, R²: 0.5484, Pearson: 0.7525
+  ✅ Val loss improved: 0.3296 → 0.3291 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 8.14e-06
+Epoch 52/80 (LR: 8.14e-06)
+  Train - Loss: 0.1430, MAE: 0.3367, R²: 0.8267
+  Val   - Loss: 0.3332, MAE: 0.5008, R²: 0.5462, Pearson: 0.7522
+  ⚠️  Val loss: 0.3332 (best: 0.3291)
+  📊 Scheduler state: bad epochs 2/8, current LR: 8.14e-06
+Epoch 53/80 (LR: 8.14e-06)
+  Train - Loss: 0.1383, MAE: 0.3207, R²: 0.8336
+  Val   - Loss: 0.3377, MAE: 0.5180, R²: 0.5343, Pearson: 0.7543
+  ⚠️  Val loss: 0.3377 (best: 0.3291)
+  📊 Scheduler state: bad epochs 3/8, current LR: 8.14e-06
+Epoch 54/80 (LR: 8.14e-06)
+  Train - Loss: 0.1444, MAE: 0.3311, R²: 0.8256
+  Val   - Loss: 0.3305, MAE: 0.5059, R²: 0.5409, Pearson: 0.7534
+  ⚠️  Val loss: 0.3305 (best: 0.3291)
+  📊 Scheduler state: bad epochs 0/8, current LR: 8.14e-06
+Epoch 55/80 (LR: 8.14e-06)
+  Train - Loss: 0.1366, MAE: 0.3195, R²: 0.8353
+  Val   - Loss: 0.3271, MAE: 0.4907, R²: 0.5525, Pearson: 0.7550
+  ✅ Val loss improved: 0.3291 → 0.3271 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 8.14e-06
+Epoch 56/80 (LR: 8.14e-06)
+  Train - Loss: 0.1445, MAE: 0.3395, R²: 0.8193
+  Val   - Loss: 0.3301, MAE: 0.4916, R²: 0.5533, Pearson: 0.7535
+  ⚠️  Val loss: 0.3301 (best: 0.3271)
+  📊 Scheduler state: bad epochs 2/8, current LR: 8.14e-06
+Epoch 57/80 (LR: 8.14e-06)
+  Train - Loss: 0.1365, MAE: 0.3216, R²: 0.8294
+  Val   - Loss: 0.3485, MAE: 0.5332, R²: 0.5171, Pearson: 0.7533
+  ⚠️  Val loss: 0.3485 (best: 0.3271)
+  📊 Scheduler state: bad epochs 3/8, current LR: 8.14e-06
+Epoch 58/80 (LR: 8.14e-06)
+  Train - Loss: 0.1484, MAE: 0.3462, R²: 0.8089
+  Val   - Loss: 0.3320, MAE: 0.4958, R²: 0.5491, Pearson: 0.7530
+  ⚠️  Val loss: 0.3320 (best: 0.3271)
+  📊 Scheduler state: bad epochs 4/8, current LR: 8.14e-06
+Epoch 59/80 (LR: 8.14e-06)
+  Train - Loss: 0.1314, MAE: 0.3152, R²: 0.8507
+  Val   - Loss: 0.3317, MAE: 0.4924, R²: 0.5488, Pearson: 0.7515
+  ⚠️  Val loss: 0.3317 (best: 0.3271)
+  📊 Scheduler state: bad epochs 5/8, current LR: 8.14e-06
+Epoch 60/80 (LR: 8.14e-06)
+  Train - Loss: 0.1506, MAE: 0.3481, R²: 0.8064
+  Val   - Loss: 0.3311, MAE: 0.4942, R²: 0.5450, Pearson: 0.7515
+  ⚠️  Val loss: 0.3311 (best: 0.3271)
+  📊 Scheduler state: bad epochs 6/8, current LR: 8.14e-06
+Epoch 61/80 (LR: 8.14e-06)
+  Train - Loss: 0.1383, MAE: 0.3275, R²: 0.8349
+  Val   - Loss: 0.3391, MAE: 0.5121, R²: 0.5337, Pearson: 0.7531
+  ⚠️  Val loss: 0.3391 (best: 0.3271)
+  📊 Scheduler state: bad epochs 7/8, current LR: 8.14e-06
+Epoch 62/80 (LR: 8.14e-06)
+  Train - Loss: 0.1451, MAE: 0.3244, R²: 0.8326
+  Val   - Loss: 0.3290, MAE: 0.4927, R²: 0.5434, Pearson: 0.7511
+  ⚠️  Val loss: 0.3290 (best: 0.3271)
+  📊 Scheduler state: bad epochs 8/8, current LR: 8.14e-06
+Epoch 63/80 (LR: 8.14e-06)
+  Train - Loss: 0.1371, MAE: 0.3203, R²: 0.8380
+  Val   - Loss: 0.3352, MAE: 0.4944, R²: 0.5461, Pearson: 0.7508
+  ⚠️  Val loss: 0.3352 (best: 0.3271)
+  📉 Learning rate reduced: 8.14e-06 → 2.68e-06 (bad epochs: 0/8)
+Epoch 64/80 (LR: 2.68e-06)
+  Train - Loss: 0.1423, MAE: 0.3136, R²: 0.8361
+  Val   - Loss: 0.3326, MAE: 0.4973, R²: 0.5435, Pearson: 0.7524
+  ⚠️  Val loss: 0.3326 (best: 0.3271)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.68e-06
+Epoch 65/80 (LR: 2.68e-06)
+  Train - Loss: 0.1418, MAE: 0.3284, R²: 0.8269
+  Val   - Loss: 0.3284, MAE: 0.4909, R²: 0.5462, Pearson: 0.7528
+  ⚠️  Val loss: 0.3284 (best: 0.3271)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.68e-06
+Epoch 66/80 (LR: 2.68e-06)
+  Train - Loss: 0.1433, MAE: 0.3373, R²: 0.8223
+  Val   - Loss: 0.3303, MAE: 0.4912, R²: 0.5501, Pearson: 0.7530
+  ⚠️  Val loss: 0.3303 (best: 0.3271)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.68e-06
+Epoch 67/80 (LR: 2.68e-06)
+  Train - Loss: 0.1371, MAE: 0.3176, R²: 0.8396
+  Val   - Loss: 0.3314, MAE: 0.4957, R²: 0.5418, Pearson: 0.7499
+  ⚠️  Val loss: 0.3314 (best: 0.3271)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.68e-06
+Epoch 68/80 (LR: 2.68e-06)
+  Train - Loss: 0.1245, MAE: 0.2968, R²: 0.8601
+  Val   - Loss: 0.3360, MAE: 0.5002, R²: 0.5423, Pearson: 0.7502
+  ⚠️  Val loss: 0.3360 (best: 0.3271)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.68e-06
+Epoch 69/80 (LR: 2.68e-06)
+  Train - Loss: 0.1315, MAE: 0.3020, R²: 0.8533
+  Val   - Loss: 0.3346, MAE: 0.4977, R²: 0.5442, Pearson: 0.7488
+  ⚠️  Val loss: 0.3346 (best: 0.3271)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.68e-06
+Epoch 70/80 (LR: 2.68e-06)
+  Train - Loss: 0.1380, MAE: 0.3244, R²: 0.8350
+  Val   - Loss: 0.3344, MAE: 0.4946, R²: 0.5445, Pearson: 0.7494
+  ⚠️  Val loss: 0.3344 (best: 0.3271)
+  📊 Scheduler state: bad epochs 7/8, current LR: 2.68e-06
+Epoch 71/80 (LR: 2.68e-06)
+  Train - Loss: 0.1351, MAE: 0.3160, R²: 0.8438
+  Val   - Loss: 0.3361, MAE: 0.5007, R²: 0.5400, Pearson: 0.7507
+  ⚠️  Val loss: 0.3361 (best: 0.3271)
+  📊 Scheduler state: bad epochs 8/8, current LR: 2.68e-06
+Epoch 72/80 (LR: 2.68e-06)
+  Train - Loss: 0.1355, MAE: 0.3183, R²: 0.8421
+  Val   - Loss: 0.3361, MAE: 0.4931, R²: 0.5469, Pearson: 0.7507
+  ⚠️  Val loss: 0.3361 (best: 0.3271)
+  📉 Learning rate reduced: 2.68e-06 → 1.00e-06 (bad epochs: 0/8)
+Epoch 73/80 (LR: 1.00e-06)
+  Train - Loss: 0.1306, MAE: 0.3047, R²: 0.8547
+  Val   - Loss: 0.3380, MAE: 0.5015, R²: 0.5420, Pearson: 0.7515
+  ⚠️  Val loss: 0.3380 (best: 0.3271)
+  📊 Scheduler state: bad epochs 1/8, current LR: 1.00e-06
+Epoch 74/80 (LR: 1.00e-06)
+  Train - Loss: 0.1285, MAE: 0.3045, R²: 0.8537
+  Val   - Loss: 0.3313, MAE: 0.4908, R²: 0.5480, Pearson: 0.7516
+  ⚠️  Val loss: 0.3313 (best: 0.3271)
+  📊 Scheduler state: bad epochs 2/8, current LR: 1.00e-06
+Epoch 75/80 (LR: 1.00e-06)
+  Train - Loss: 0.1283, MAE: 0.3045, R²: 0.8558
+  Val   - Loss: 0.3333, MAE: 0.4950, R²: 0.5464, Pearson: 0.7520
+  ⚠️  Val loss: 0.3333 (best: 0.3271)
+Early stopping at epoch 75
+Fold 1 completed - Best Val Loss: 0.3271
+Best metrics - Epoch 55 - Loss: 0.3271, MAE: 0.4907, R²: 0.5525, Pearson: 0.7550
+🏆 New overall best model found in fold 1
+   Val Loss: 0.3271 | MAE: 0.4907 | R²: 0.5525 | Pearson: 0.7550
+============================================================FOLD 2/5 - RESNET34============================================================\nFold 2 - Train samples: 912, Val samples: 228
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 1/80 (LR: 7.50e-05)
+  Train - Loss: 1.0361, MAE: 5.9244, R²: -32.5344
+  Val   - Loss: 0.9595, MAE: 5.7226, R²: -33.0530, Pearson: 0.6467
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 2/80 (LR: 7.50e-05)
+  Train - Loss: 0.9385, MAE: 5.0498, R²: -25.4760
+  Val   - Loss: 0.7933, MAE: 3.6130, R²: -15.5887, Pearson: 0.6679
+  ✅ Val loss improved: 0.9595 → 0.7933 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 3/80 (LR: 7.50e-05)
+  Train - Loss: 0.6216, MAE: 1.8441, R²: -4.7820
+  Val   - Loss: 0.5287, MAE: 0.9115, R²: -0.2111, Pearson: 0.6873
+  ✅ Val loss improved: 0.7933 → 0.5287 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 4/80 (LR: 7.50e-05)
+  Train - Loss: 0.3759, MAE: 0.7028, R²: 0.2158
+  Val   - Loss: 0.3998, MAE: 0.6464, R²: 0.3290, Pearson: 0.7422
+  ✅ Val loss improved: 0.5287 → 0.3998 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 5/80 (LR: 7.50e-05)
+  Train - Loss: 0.3016, MAE: 0.5827, R²: 0.4753
+  Val   - Loss: 0.3431, MAE: 0.5267, R²: 0.4877, Pearson: 0.7362
+  ✅ Val loss improved: 0.3998 → 0.3431 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 6/80 (LR: 7.50e-05)
+  Train - Loss: 0.2949, MAE: 0.5690, R²: 0.4919
+  Val   - Loss: 0.3360, MAE: 0.4939, R²: 0.5345, Pearson: 0.7422
+  ✅ Val loss improved: 0.3431 → 0.3360 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 7/80 (LR: 7.50e-05)
+  Train - Loss: 0.2660, MAE: 0.5343, R²: 0.5471
+  Val   - Loss: 0.3364, MAE: 0.5309, R²: 0.5105, Pearson: 0.7771
+  ⚠️  Val loss: 0.3364 (best: 0.3360)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 8/80 (LR: 7.50e-05)
+  Train - Loss: 0.2505, MAE: 0.5058, R²: 0.6011
+  Val   - Loss: 0.4917, MAE: 0.8793, R²: -0.0577, Pearson: 0.7389
+  ⚠️  Val loss: 0.4917 (best: 0.3360)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 9/80 (LR: 7.50e-05)
+  Train - Loss: 0.2433, MAE: 0.5044, R²: 0.6084
+  Val   - Loss: 0.3641, MAE: 0.5244, R²: 0.5072, Pearson: 0.7396
+  ⚠️  Val loss: 0.3641 (best: 0.3360)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 10/80 (LR: 7.50e-05)
+  Train - Loss: 0.2210, MAE: 0.4459, R²: 0.6747
+  Val   - Loss: 0.3619, MAE: 0.5194, R²: 0.5058, Pearson: 0.7360
+  ⚠️  Val loss: 0.3619 (best: 0.3360)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 11/80 (LR: 7.50e-05)
+  Train - Loss: 0.2217, MAE: 0.4592, R²: 0.6603
+  Val   - Loss: 0.3587, MAE: 0.5301, R²: 0.5248, Pearson: 0.7551
+  ⚠️  Val loss: 0.3587 (best: 0.3360)
+  📊 Scheduler state: bad epochs 6/8, current LR: 7.50e-05
+Epoch 12/80 (LR: 7.50e-05)
+  Train - Loss: 0.2107, MAE: 0.4528, R²: 0.6862
+  Val   - Loss: 0.3490, MAE: 0.5573, R²: 0.4693, Pearson: 0.7379
+  ⚠️  Val loss: 0.3490 (best: 0.3360)
+  📊 Scheduler state: bad epochs 7/8, current LR: 7.50e-05
+Epoch 13/80 (LR: 7.50e-05)
+  Train - Loss: 0.2112, MAE: 0.4519, R²: 0.6776
+  Val   - Loss: 0.3731, MAE: 0.5362, R²: 0.4854, Pearson: 0.7343
+  ⚠️  Val loss: 0.3731 (best: 0.3360)
+  📊 Scheduler state: bad epochs 8/8, current LR: 7.50e-05
+Epoch 14/80 (LR: 7.50e-05)
+  Train - Loss: 0.2115, MAE: 0.4366, R²: 0.7056
+  Val   - Loss: 0.3379, MAE: 0.4716, R²: 0.5702, Pearson: 0.7600
+  ⚠️  Val loss: 0.3379 (best: 0.3360)
+  📉 Learning rate reduced: 7.50e-05 → 2.47e-05 (bad epochs: 0/8)
+Epoch 15/80 (LR: 2.47e-05)
+  Train - Loss: 0.1824, MAE: 0.4073, R²: 0.7508
+  Val   - Loss: 0.3904, MAE: 0.5165, R²: 0.5292, Pearson: 0.7482
+  ⚠️  Val loss: 0.3904 (best: 0.3360)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 16/80 (LR: 2.47e-05)
+  Train - Loss: 0.1914, MAE: 0.4108, R²: 0.7328
+  Val   - Loss: 0.3218, MAE: 0.4886, R²: 0.5582, Pearson: 0.7617
+  ✅ Val loss improved: 0.3360 → 0.3218 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 17/80 (LR: 2.47e-05)
+  Train - Loss: 0.1877, MAE: 0.3964, R²: 0.7553
+  Val   - Loss: 0.3468, MAE: 0.4792, R²: 0.5721, Pearson: 0.7564
+  ⚠️  Val loss: 0.3468 (best: 0.3218)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 18/80 (LR: 2.47e-05)
+  Train - Loss: 0.1765, MAE: 0.3837, R²: 0.7708
+  Val   - Loss: 0.3243, MAE: 0.4875, R²: 0.5641, Pearson: 0.7692
+  ⚠️  Val loss: 0.3243 (best: 0.3218)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 19/80 (LR: 2.47e-05)
+  Train - Loss: 0.1645, MAE: 0.3794, R²: 0.7828
+  Val   - Loss: 0.3340, MAE: 0.4801, R²: 0.5621, Pearson: 0.7612
+  ⚠️  Val loss: 0.3340 (best: 0.3218)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 20/80 (LR: 2.47e-05)
+  Train - Loss: 0.1577, MAE: 0.3533, R²: 0.8075
+  Val   - Loss: 0.3177, MAE: 0.4614, R²: 0.5997, Pearson: 0.7760
+  ✅ Val loss improved: 0.3218 → 0.3177 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 21/80 (LR: 2.47e-05)
+  Train - Loss: 0.1521, MAE: 0.3562, R²: 0.8041
+  Val   - Loss: 0.3326, MAE: 0.4868, R²: 0.5695, Pearson: 0.7648
+  ⚠️  Val loss: 0.3326 (best: 0.3177)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 22/80 (LR: 2.47e-05)
+  Train - Loss: 0.1534, MAE: 0.3457, R²: 0.8128
+  Val   - Loss: 0.3347, MAE: 0.4973, R²: 0.5370, Pearson: 0.7552
+  ⚠️  Val loss: 0.3347 (best: 0.3177)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 23/80 (LR: 2.47e-05)
+  Train - Loss: 0.1498, MAE: 0.3437, R²: 0.8144
+  Val   - Loss: 0.3377, MAE: 0.4784, R²: 0.5610, Pearson: 0.7557
+  ⚠️  Val loss: 0.3377 (best: 0.3177)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.47e-05
+Epoch 24/80 (LR: 2.47e-05)
+  Train - Loss: 0.1699, MAE: 0.3860, R²: 0.7760
+  Val   - Loss: 0.3424, MAE: 0.4825, R²: 0.5446, Pearson: 0.7480
+  ⚠️  Val loss: 0.3424 (best: 0.3177)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.47e-05
+Epoch 25/80 (LR: 2.47e-05)
+  Train - Loss: 0.1614, MAE: 0.3520, R²: 0.8044
+  Val   - Loss: 0.3424, MAE: 0.5150, R²: 0.5271, Pearson: 0.7572
+  ⚠️  Val loss: 0.3424 (best: 0.3177)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.47e-05
+Epoch 26/80 (LR: 2.47e-05)
+  Train - Loss: 0.1585, MAE: 0.3655, R²: 0.7955
+  Val   - Loss: 0.3188, MAE: 0.4622, R²: 0.5771, Pearson: 0.7700
+  ⚠️  Val loss: 0.3188 (best: 0.3177)
+  📊 Scheduler state: bad epochs 7/8, current LR: 2.47e-05
+Epoch 27/80 (LR: 2.47e-05)
+  Train - Loss: 0.1573, MAE: 0.3296, R²: 0.8194
+  Val   - Loss: 0.3234, MAE: 0.4726, R²: 0.5683, Pearson: 0.7592
+  ⚠️  Val loss: 0.3234 (best: 0.3177)
+  📊 Scheduler state: bad epochs 8/8, current LR: 2.47e-05
+Epoch 28/80 (LR: 2.47e-05)
+  Train - Loss: 0.1422, MAE: 0.3268, R²: 0.8343
+  Val   - Loss: 0.3229, MAE: 0.4851, R²: 0.5598, Pearson: 0.7600
+  ⚠️  Val loss: 0.3229 (best: 0.3177)
+  📉 Learning rate reduced: 2.47e-05 → 8.14e-06 (bad epochs: 0/8)
+Epoch 29/80 (LR: 8.14e-06)
+  Train - Loss: 0.1538, MAE: 0.3523, R²: 0.8049
+  Val   - Loss: 0.3203, MAE: 0.4621, R²: 0.6000, Pearson: 0.7757
+  ⚠️  Val loss: 0.3203 (best: 0.3177)
+  📊 Scheduler state: bad epochs 0/8, current LR: 8.14e-06
+Epoch 30/80 (LR: 8.14e-06)
+  Train - Loss: 0.1420, MAE: 0.3349, R²: 0.8234
+  Val   - Loss: 0.3148, MAE: 0.4594, R²: 0.5944, Pearson: 0.7738
+  ✅ Val loss improved: 0.3177 → 0.3148 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 8.14e-06
+Epoch 31/80 (LR: 8.14e-06)
+  Train - Loss: 0.1432, MAE: 0.3277, R²: 0.8335
+  Val   - Loss: 0.3231, MAE: 0.4639, R²: 0.5800, Pearson: 0.7670
+  ⚠️  Val loss: 0.3231 (best: 0.3148)
+  📊 Scheduler state: bad epochs 2/8, current LR: 8.14e-06
+Epoch 32/80 (LR: 8.14e-06)
+  Train - Loss: 0.1518, MAE: 0.3403, R²: 0.8131
+  Val   - Loss: 0.3235, MAE: 0.4661, R²: 0.5746, Pearson: 0.7648
+  ⚠️  Val loss: 0.3235 (best: 0.3148)
+  📊 Scheduler state: bad epochs 3/8, current LR: 8.14e-06
+Epoch 33/80 (LR: 8.14e-06)
+  Train - Loss: 0.1425, MAE: 0.3328, R²: 0.8263
+  Val   - Loss: 0.3300, MAE: 0.4777, R²: 0.5764, Pearson: 0.7647
+  ⚠️  Val loss: 0.3300 (best: 0.3148)
+  📊 Scheduler state: bad epochs 4/8, current LR: 8.14e-06
+Epoch 34/80 (LR: 8.14e-06)
+  Train - Loss: 0.1483, MAE: 0.3367, R²: 0.8218
+  Val   - Loss: 0.3172, MAE: 0.4560, R²: 0.5957, Pearson: 0.7728
+  ⚠️  Val loss: 0.3172 (best: 0.3148)
+  📊 Scheduler state: bad epochs 5/8, current LR: 8.14e-06
+Epoch 35/80 (LR: 8.14e-06)
+  Train - Loss: 0.1400, MAE: 0.3208, R²: 0.8393
+  Val   - Loss: 0.3178, MAE: 0.4603, R²: 0.5956, Pearson: 0.7731
+  ⚠️  Val loss: 0.3178 (best: 0.3148)
+  📊 Scheduler state: bad epochs 6/8, current LR: 8.14e-06
+Epoch 36/80 (LR: 8.14e-06)
+  Train - Loss: 0.1414, MAE: 0.3233, R²: 0.8325
+  Val   - Loss: 0.3203, MAE: 0.4604, R²: 0.5842, Pearson: 0.7705
+  ⚠️  Val loss: 0.3203 (best: 0.3148)
+  📊 Scheduler state: bad epochs 7/8, current LR: 8.14e-06
+Epoch 37/80 (LR: 8.14e-06)
+  Train - Loss: 0.1480, MAE: 0.3430, R²: 0.8121
+  Val   - Loss: 0.3207, MAE: 0.4628, R²: 0.5849, Pearson: 0.7661
+  ⚠️  Val loss: 0.3207 (best: 0.3148)
+  📊 Scheduler state: bad epochs 8/8, current LR: 8.14e-06
+Epoch 38/80 (LR: 8.14e-06)
+  Train - Loss: 0.1351, MAE: 0.3244, R²: 0.8410
+  Val   - Loss: 0.3278, MAE: 0.4639, R²: 0.5840, Pearson: 0.7660
+  ⚠️  Val loss: 0.3278 (best: 0.3148)
+  📉 Learning rate reduced: 8.14e-06 → 2.68e-06 (bad epochs: 0/8)
+Epoch 39/80 (LR: 2.68e-06)
+  Train - Loss: 0.1433, MAE: 0.3247, R²: 0.8288
+  Val   - Loss: 0.3278, MAE: 0.4815, R²: 0.5717, Pearson: 0.7623
+  ⚠️  Val loss: 0.3278 (best: 0.3148)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.68e-06
+Epoch 40/80 (LR: 2.68e-06)
+  Train - Loss: 0.1361, MAE: 0.3219, R²: 0.8418
+  Val   - Loss: 0.3241, MAE: 0.4669, R²: 0.5782, Pearson: 0.7632
+  ⚠️  Val loss: 0.3241 (best: 0.3148)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.68e-06
+Epoch 41/80 (LR: 2.68e-06)
+  Train - Loss: 0.1445, MAE: 0.3167, R²: 0.8417
+  Val   - Loss: 0.3235, MAE: 0.4647, R²: 0.5841, Pearson: 0.7663
+  ⚠️  Val loss: 0.3235 (best: 0.3148)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.68e-06
+Epoch 42/80 (LR: 2.68e-06)
+  Train - Loss: 0.1369, MAE: 0.3127, R²: 0.8441
+  Val   - Loss: 0.3255, MAE: 0.4650, R²: 0.5800, Pearson: 0.7657
+  ⚠️  Val loss: 0.3255 (best: 0.3148)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.68e-06
+Epoch 43/80 (LR: 2.68e-06)
+  Train - Loss: 0.1379, MAE: 0.3134, R²: 0.8445
+  Val   - Loss: 0.3242, MAE: 0.4649, R²: 0.5830, Pearson: 0.7649
+  ⚠️  Val loss: 0.3242 (best: 0.3148)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.68e-06
+Epoch 44/80 (LR: 2.68e-06)
+  Train - Loss: 0.1419, MAE: 0.3137, R²: 0.8419
+  Val   - Loss: 0.3230, MAE: 0.4692, R²: 0.5850, Pearson: 0.7680
+  ⚠️  Val loss: 0.3230 (best: 0.3148)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.68e-06
+Epoch 45/80 (LR: 2.68e-06)
+  Train - Loss: 0.1541, MAE: 0.3425, R²: 0.8156
+  Val   - Loss: 0.3216, MAE: 0.4661, R²: 0.5831, Pearson: 0.7698
+  ⚠️  Val loss: 0.3216 (best: 0.3148)
+  📊 Scheduler state: bad epochs 7/8, current LR: 2.68e-06
+Epoch 46/80 (LR: 2.68e-06)
+  Train - Loss: 0.1418, MAE: 0.3222, R²: 0.8375
+  Val   - Loss: 0.3193, MAE: 0.4660, R²: 0.5907, Pearson: 0.7702
+  ⚠️  Val loss: 0.3193 (best: 0.3148)
+  📊 Scheduler state: bad epochs 8/8, current LR: 2.68e-06
+Epoch 47/80 (LR: 2.68e-06)
+  Train - Loss: 0.1441, MAE: 0.3317, R²: 0.8257
+  Val   - Loss: 0.3169, MAE: 0.4633, R²: 0.5911, Pearson: 0.7707
+  ⚠️  Val loss: 0.3169 (best: 0.3148)
+  📉 Learning rate reduced: 2.68e-06 → 1.00e-06 (bad epochs: 0/8)
+Epoch 48/80 (LR: 1.00e-06)
+  Train - Loss: 0.1497, MAE: 0.3407, R²: 0.8222
+  Val   - Loss: 0.3149, MAE: 0.4708, R²: 0.5835, Pearson: 0.7693
+  ⚠️  Val loss: 0.3149 (best: 0.3148)
+  📊 Scheduler state: bad epochs 1/8, current LR: 1.00e-06
+Epoch 49/80 (LR: 1.00e-06)
+  Train - Loss: 0.1309, MAE: 0.3045, R²: 0.8473
+  Val   - Loss: 0.3183, MAE: 0.4713, R²: 0.5847, Pearson: 0.7692
+  ⚠️  Val loss: 0.3183 (best: 0.3148)
+  📊 Scheduler state: bad epochs 2/8, current LR: 1.00e-06
+Epoch 50/80 (LR: 1.00e-06)
+  Train - Loss: 0.1434, MAE: 0.3260, R²: 0.8255
+  Val   - Loss: 0.3224, MAE: 0.4672, R²: 0.5891, Pearson: 0.7693
+  ⚠️  Val loss: 0.3224 (best: 0.3148)
+Early stopping at epoch 50
+Fold 2 completed - Best Val Loss: 0.3148
+Best metrics - Epoch 30 - Loss: 0.3148, MAE: 0.4594, R²: 0.5944, Pearson: 0.7738
+🏆 New overall best model found in fold 2
+   Val Loss: 0.3148 | MAE: 0.4594 | R²: 0.5944 | Pearson: 0.7738
+============================================================FOLD 3/5 - RESNET34============================================================\nFold 3 - Train samples: 912, Val samples: 228
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 1/80 (LR: 7.50e-05)
+  Train - Loss: 1.0370, MAE: 5.9150, R²: -32.1326
+  Val   - Loss: 0.9685, MAE: 5.9428, R²: -36.8130, Pearson: 0.6479
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 2/80 (LR: 7.50e-05)
+  Train - Loss: 0.9556, MAE: 5.3333, R²: -27.7864
+  Val   - Loss: 0.8564, MAE: 4.1563, R²: -21.5408, Pearson: 0.7179
+  ✅ Val loss improved: 0.9685 → 0.8564 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 3/80 (LR: 7.50e-05)
+  Train - Loss: 0.6451, MAE: 2.1566, R²: -6.6615
+  Val   - Loss: 0.5464, MAE: 0.9280, R²: -0.3482, Pearson: 0.7083
+  ✅ Val loss improved: 0.8564 → 0.5464 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 4/80 (LR: 7.50e-05)
+  Train - Loss: 0.3479, MAE: 0.6480, R²: 0.3639
+  Val   - Loss: 0.4764, MAE: 0.8146, R²: -0.0042, Pearson: 0.7489
+  ✅ Val loss improved: 0.5464 → 0.4764 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 5/80 (LR: 7.50e-05)
+  Train - Loss: 0.2943, MAE: 0.5590, R²: 0.5146
+  Val   - Loss: 0.4427, MAE: 0.6275, R²: 0.3454, Pearson: 0.7588
+  ✅ Val loss improved: 0.4764 → 0.4427 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 6/80 (LR: 7.50e-05)
+  Train - Loss: 0.2514, MAE: 0.5197, R²: 0.5930
+  Val   - Loss: 0.3274, MAE: 0.5683, R²: 0.4354, Pearson: 0.7736
+  ✅ Val loss improved: 0.4427 → 0.3274 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 7/80 (LR: 7.50e-05)
+  Train - Loss: 0.2651, MAE: 0.5150, R²: 0.5648
+  Val   - Loss: 0.3499, MAE: 0.5351, R²: 0.4738, Pearson: 0.7828
+  ⚠️  Val loss: 0.3499 (best: 0.3274)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 8/80 (LR: 7.50e-05)
+  Train - Loss: 0.2416, MAE: 0.5071, R²: 0.6091
+  Val   - Loss: 0.4263, MAE: 0.6824, R²: 0.2646, Pearson: 0.7887
+  ⚠️  Val loss: 0.4263 (best: 0.3274)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 9/80 (LR: 7.50e-05)
+  Train - Loss: 0.2417, MAE: 0.5265, R²: 0.5918
+  Val   - Loss: 0.3215, MAE: 0.4524, R²: 0.6082, Pearson: 0.7931
+  ✅ Val loss improved: 0.3274 → 0.3215 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 10/80 (LR: 7.50e-05)
+  Train - Loss: 0.2213, MAE: 0.4671, R²: 0.6680
+  Val   - Loss: 0.3625, MAE: 0.5713, R²: 0.4720, Pearson: 0.7970
+  ⚠️  Val loss: 0.3625 (best: 0.3215)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 11/80 (LR: 7.50e-05)
+  Train - Loss: 0.2116, MAE: 0.4579, R²: 0.6792
+  Val   - Loss: 0.3343, MAE: 0.5344, R²: 0.5054, Pearson: 0.7662
+  ⚠️  Val loss: 0.3343 (best: 0.3215)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 12/80 (LR: 7.50e-05)
+  Train - Loss: 0.2025, MAE: 0.4422, R²: 0.7065
+  Val   - Loss: 0.3737, MAE: 0.5956, R²: 0.4029, Pearson: 0.7861
+  ⚠️  Val loss: 0.3737 (best: 0.3215)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 13/80 (LR: 7.50e-05)
+  Train - Loss: 0.2130, MAE: 0.4555, R²: 0.6691
+  Val   - Loss: 0.3359, MAE: 0.4672, R²: 0.5982, Pearson: 0.7919
+  ⚠️  Val loss: 0.3359 (best: 0.3215)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 14/80 (LR: 7.50e-05)
+  Train - Loss: 0.2323, MAE: 0.4850, R²: 0.6398
+  Val   - Loss: 0.3003, MAE: 0.4650, R²: 0.5935, Pearson: 0.8066
+  ✅ Val loss improved: 0.3215 → 0.3003 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 15/80 (LR: 7.50e-05)
+  Train - Loss: 0.1960, MAE: 0.4357, R²: 0.7131
+  Val   - Loss: 0.3317, MAE: 0.5232, R²: 0.5305, Pearson: 0.7956
+  ⚠️  Val loss: 0.3317 (best: 0.3003)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 16/80 (LR: 7.50e-05)
+  Train - Loss: 0.2030, MAE: 0.4449, R²: 0.6936
+  Val   - Loss: 0.3366, MAE: 0.5045, R²: 0.5276, Pearson: 0.7778
+  ⚠️  Val loss: 0.3366 (best: 0.3003)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 17/80 (LR: 7.50e-05)
+  Train - Loss: 0.1766, MAE: 0.4069, R²: 0.7444
+  Val   - Loss: 0.3342, MAE: 0.4981, R²: 0.5590, Pearson: 0.7878
+  ⚠️  Val loss: 0.3342 (best: 0.3003)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 18/80 (LR: 7.50e-05)
+  Train - Loss: 0.1842, MAE: 0.4138, R²: 0.7418
+  Val   - Loss: 0.3019, MAE: 0.4555, R²: 0.6092, Pearson: 0.8005
+  ⚠️  Val loss: 0.3019 (best: 0.3003)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 19/80 (LR: 7.50e-05)
+  Train - Loss: 0.1712, MAE: 0.3884, R²: 0.7642
+  Val   - Loss: 0.3144, MAE: 0.4700, R²: 0.5949, Pearson: 0.7904
+  ⚠️  Val loss: 0.3144 (best: 0.3003)
+  📊 Scheduler state: bad epochs 6/8, current LR: 7.50e-05
+Epoch 20/80 (LR: 7.50e-05)
+  Train - Loss: 0.1948, MAE: 0.4310, R²: 0.7169
+  Val   - Loss: 0.3034, MAE: 0.4528, R²: 0.6244, Pearson: 0.8029
+  ⚠️  Val loss: 0.3034 (best: 0.3003)
+  📊 Scheduler state: bad epochs 7/8, current LR: 7.50e-05
+Epoch 21/80 (LR: 7.50e-05)
+  Train - Loss: 0.1846, MAE: 0.4115, R²: 0.7389
+  Val   - Loss: 0.3167, MAE: 0.4871, R²: 0.5861, Pearson: 0.7982
+  ⚠️  Val loss: 0.3167 (best: 0.3003)
+  📊 Scheduler state: bad epochs 8/8, current LR: 7.50e-05
+Epoch 22/80 (LR: 7.50e-05)
+  Train - Loss: 0.1969, MAE: 0.4327, R²: 0.7075
+  Val   - Loss: 0.3138, MAE: 0.4385, R²: 0.6201, Pearson: 0.8066
+  ⚠️  Val loss: 0.3138 (best: 0.3003)
+  📉 Learning rate reduced: 7.50e-05 → 2.47e-05 (bad epochs: 0/8)
+Epoch 23/80 (LR: 2.47e-05)
+  Train - Loss: 0.1730, MAE: 0.3877, R²: 0.7645
+  Val   - Loss: 0.3252, MAE: 0.4913, R²: 0.5504, Pearson: 0.8049
+  ⚠️  Val loss: 0.3252 (best: 0.3003)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 24/80 (LR: 2.47e-05)
+  Train - Loss: 0.1593, MAE: 0.3706, R²: 0.7880
+  Val   - Loss: 0.3171, MAE: 0.4499, R²: 0.6166, Pearson: 0.8087
+  ⚠️  Val loss: 0.3171 (best: 0.3003)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 25/80 (LR: 2.47e-05)
+  Train - Loss: 0.1818, MAE: 0.3865, R²: 0.7566
+  Val   - Loss: 0.2941, MAE: 0.4217, R²: 0.6563, Pearson: 0.8171
+  ✅ Val loss improved: 0.3003 → 0.2941 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 26/80 (LR: 2.47e-05)
+  Train - Loss: 0.1600, MAE: 0.3665, R²: 0.7922
+  Val   - Loss: 0.3044, MAE: 0.4234, R²: 0.6552, Pearson: 0.8123
+  ⚠️  Val loss: 0.3044 (best: 0.2941)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 27/80 (LR: 2.47e-05)
+  Train - Loss: 0.1482, MAE: 0.3413, R²: 0.8148
+  Val   - Loss: 0.3071, MAE: 0.4391, R²: 0.6339, Pearson: 0.8142
+  ⚠️  Val loss: 0.3071 (best: 0.2941)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 28/80 (LR: 2.47e-05)
+  Train - Loss: 0.1456, MAE: 0.3467, R²: 0.8108
+  Val   - Loss: 0.3101, MAE: 0.4364, R²: 0.6443, Pearson: 0.8184
+  ⚠️  Val loss: 0.3101 (best: 0.2941)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.47e-05
+Epoch 29/80 (LR: 2.47e-05)
+  Train - Loss: 0.1534, MAE: 0.3672, R²: 0.7987
+  Val   - Loss: 0.3086, MAE: 0.4322, R²: 0.6462, Pearson: 0.8166
+  ⚠️  Val loss: 0.3086 (best: 0.2941)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.47e-05
+Epoch 30/80 (LR: 2.47e-05)
+  Train - Loss: 0.1601, MAE: 0.3645, R²: 0.7941
+  Val   - Loss: 0.3258, MAE: 0.4732, R²: 0.5977, Pearson: 0.8067
+  ⚠️  Val loss: 0.3258 (best: 0.2941)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.47e-05
+Epoch 31/80 (LR: 2.47e-05)
+  Train - Loss: 0.1625, MAE: 0.3711, R²: 0.7848
+  Val   - Loss: 0.2971, MAE: 0.4334, R²: 0.6451, Pearson: 0.8143
+  ⚠️  Val loss: 0.2971 (best: 0.2941)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 32/80 (LR: 2.47e-05)
+  Train - Loss: 0.1434, MAE: 0.3450, R²: 0.8187
+  Val   - Loss: 0.2915, MAE: 0.4167, R²: 0.6476, Pearson: 0.8108
+  ✅ Val loss improved: 0.2941 → 0.2915 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 33/80 (LR: 2.47e-05)
+  Train - Loss: 0.1568, MAE: 0.3631, R²: 0.7988
+  Val   - Loss: 0.3113, MAE: 0.4481, R²: 0.6202, Pearson: 0.8089
+  ⚠️  Val loss: 0.3113 (best: 0.2915)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 34/80 (LR: 2.47e-05)
+  Train - Loss: 0.1577, MAE: 0.3585, R²: 0.8013
+  Val   - Loss: 0.3146, MAE: 0.4619, R²: 0.6025, Pearson: 0.8085
+  ⚠️  Val loss: 0.3146 (best: 0.2915)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 35/80 (LR: 2.47e-05)
+  Train - Loss: 0.1514, MAE: 0.3561, R²: 0.8105
+  Val   - Loss: 0.3046, MAE: 0.4233, R²: 0.6493, Pearson: 0.8076
+  ⚠️  Val loss: 0.3046 (best: 0.2915)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.47e-05
+Epoch 36/80 (LR: 2.47e-05)
+  Train - Loss: 0.1421, MAE: 0.3319, R²: 0.8265
+  Val   - Loss: 0.3006, MAE: 0.4356, R²: 0.6438, Pearson: 0.8130
+  ⚠️  Val loss: 0.3006 (best: 0.2915)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.47e-05
+Epoch 37/80 (LR: 2.47e-05)
+  Train - Loss: 0.1476, MAE: 0.3401, R²: 0.8166
+  Val   - Loss: 0.3188, MAE: 0.4470, R²: 0.6223, Pearson: 0.8037
+  ⚠️  Val loss: 0.3188 (best: 0.2915)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.47e-05
+Epoch 38/80 (LR: 2.47e-05)
+  Train - Loss: 0.1502, MAE: 0.3320, R²: 0.8156
+  Val   - Loss: 0.3180, MAE: 0.4623, R²: 0.6016, Pearson: 0.8104
+  ⚠️  Val loss: 0.3180 (best: 0.2915)
+  📊 Scheduler state: bad epochs 7/8, current LR: 2.47e-05
+Epoch 39/80 (LR: 2.47e-05)
+  Train - Loss: 0.1466, MAE: 0.3398, R²: 0.8195
+  Val   - Loss: 0.3084, MAE: 0.4267, R²: 0.6480, Pearson: 0.8061
+  ⚠️  Val loss: 0.3084 (best: 0.2915)
+  📊 Scheduler state: bad epochs 8/8, current LR: 2.47e-05
+Epoch 40/80 (LR: 2.47e-05)
+  Train - Loss: 0.1386, MAE: 0.3292, R²: 0.8325
+  Val   - Loss: 0.3111, MAE: 0.4365, R²: 0.6441, Pearson: 0.8064
+  ⚠️  Val loss: 0.3111 (best: 0.2915)
+  📉 Learning rate reduced: 2.47e-05 → 8.14e-06 (bad epochs: 0/8)
+Epoch 41/80 (LR: 8.14e-06)
+  Train - Loss: 0.1521, MAE: 0.3541, R²: 0.8026
+  Val   - Loss: 0.3097, MAE: 0.4282, R²: 0.6457, Pearson: 0.8068
+  ⚠️  Val loss: 0.3097 (best: 0.2915)
+  📊 Scheduler state: bad epochs 1/8, current LR: 8.14e-06
+Epoch 42/80 (LR: 8.14e-06)
+  Train - Loss: 0.1540, MAE: 0.3520, R²: 0.8061
+  Val   - Loss: 0.3111, MAE: 0.4324, R²: 0.6431, Pearson: 0.8085
+  ⚠️  Val loss: 0.3111 (best: 0.2915)
+  📊 Scheduler state: bad epochs 2/8, current LR: 8.14e-06
+Epoch 43/80 (LR: 8.14e-06)
+  Train - Loss: 0.1409, MAE: 0.3301, R²: 0.8232
+  Val   - Loss: 0.3069, MAE: 0.4247, R²: 0.6486, Pearson: 0.8091
+  ⚠️  Val loss: 0.3069 (best: 0.2915)
+  📊 Scheduler state: bad epochs 3/8, current LR: 8.14e-06
+Epoch 44/80 (LR: 8.14e-06)
+  Train - Loss: 0.1394, MAE: 0.3216, R²: 0.8416
+  Val   - Loss: 0.3022, MAE: 0.4251, R²: 0.6514, Pearson: 0.8113
+  ⚠️  Val loss: 0.3022 (best: 0.2915)
+  📊 Scheduler state: bad epochs 4/8, current LR: 8.14e-06
+Epoch 45/80 (LR: 8.14e-06)
+  Train - Loss: 0.1356, MAE: 0.3052, R²: 0.8518
+  Val   - Loss: 0.3122, MAE: 0.4461, R²: 0.6223, Pearson: 0.8090
+  ⚠️  Val loss: 0.3122 (best: 0.2915)
+  📊 Scheduler state: bad epochs 5/8, current LR: 8.14e-06
+Epoch 46/80 (LR: 8.14e-06)
+  Train - Loss: 0.1409, MAE: 0.3352, R²: 0.8271
+  Val   - Loss: 0.3234, MAE: 0.4415, R²: 0.6267, Pearson: 0.8081
+  ⚠️  Val loss: 0.3234 (best: 0.2915)
+  📊 Scheduler state: bad epochs 6/8, current LR: 8.14e-06
+Epoch 47/80 (LR: 8.14e-06)
+  Train - Loss: 0.1472, MAE: 0.3217, R²: 0.8356
+  Val   - Loss: 0.3112, MAE: 0.4308, R²: 0.6453, Pearson: 0.8058
+  ⚠️  Val loss: 0.3112 (best: 0.2915)
+  📊 Scheduler state: bad epochs 7/8, current LR: 8.14e-06
+Epoch 48/80 (LR: 8.14e-06)
+  Train - Loss: 0.1330, MAE: 0.3131, R²: 0.8484
+  Val   - Loss: 0.3032, MAE: 0.4240, R²: 0.6517, Pearson: 0.8091
+  ⚠️  Val loss: 0.3032 (best: 0.2915)
+  📊 Scheduler state: bad epochs 8/8, current LR: 8.14e-06
+Epoch 49/80 (LR: 8.14e-06)
+  Train - Loss: 0.1353, MAE: 0.3177, R²: 0.8419
+  Val   - Loss: 0.3135, MAE: 0.4464, R²: 0.6216, Pearson: 0.8078
+  ⚠️  Val loss: 0.3135 (best: 0.2915)
+  📉 Learning rate reduced: 8.14e-06 → 2.68e-06 (bad epochs: 0/8)
+Epoch 50/80 (LR: 2.68e-06)
+  Train - Loss: 0.1443, MAE: 0.3362, R²: 0.8291
+  Val   - Loss: 0.3062, MAE: 0.4228, R²: 0.6455, Pearson: 0.8072
+  ⚠️  Val loss: 0.3062 (best: 0.2915)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.68e-06
+Epoch 51/80 (LR: 2.68e-06)
+  Train - Loss: 0.1395, MAE: 0.3298, R²: 0.8304
+  Val   - Loss: 0.3071, MAE: 0.4291, R²: 0.6405, Pearson: 0.8065
+  ⚠️  Val loss: 0.3071 (best: 0.2915)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.68e-06
+Epoch 52/80 (LR: 2.68e-06)
+  Train - Loss: 0.1350, MAE: 0.3248, R²: 0.8375
+  Val   - Loss: 0.3094, MAE: 0.4296, R²: 0.6419, Pearson: 0.8077
+  ⚠️  Val loss: 0.3094 (best: 0.2915)
+Early stopping at epoch 52
+Fold 3 completed - Best Val Loss: 0.2915
+Best metrics - Epoch 32 - Loss: 0.2915, MAE: 0.4167, R²: 0.6476, Pearson: 0.8108
+🏆 New overall best model found in fold 3
+   Val Loss: 0.2915 | MAE: 0.4167 | R²: 0.6476 | Pearson: 0.8108
+============================================================FOLD 4/5 - RESNET34============================================================\nFold 4 - Train samples: 912, Val samples: 228
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 1/80 (LR: 7.50e-05)
+  Train - Loss: 1.0409, MAE: 6.0618, R²: -35.8913
+  Val   - Loss: 0.9760, MAE: 6.3680, R²: -33.3737, Pearson: 0.6332
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 2/80 (LR: 7.50e-05)
+  Train - Loss: 0.9803, MAE: 5.8332, R²: -34.4541
+  Val   - Loss: 0.8434, MAE: 5.2044, R²: -26.9113, Pearson: 0.6254
+  ✅ Val loss improved: 0.9760 → 0.8434 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 3/80 (LR: 7.50e-05)
+  Train - Loss: 0.7543, MAE: 3.1181, R²: -13.7499
+  Val   - Loss: 0.5049, MAE: 0.9393, R²: -0.1383, Pearson: 0.6689
+  ✅ Val loss improved: 0.8434 → 0.5049 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 4/80 (LR: 7.50e-05)
+  Train - Loss: 0.3889, MAE: 0.7004, R²: 0.1816
+  Val   - Loss: 0.5424, MAE: 1.0062, R²: -0.2031, Pearson: 0.6874
+  ⚠️  Val loss: 0.5424 (best: 0.5049)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 5/80 (LR: 7.50e-05)
+  Train - Loss: 0.3274, MAE: 0.5963, R²: 0.4285
+  Val   - Loss: 0.4064, MAE: 0.7260, R²: 0.3237, Pearson: 0.7070
+  ✅ Val loss improved: 0.5049 → 0.4064 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 6/80 (LR: 7.50e-05)
+  Train - Loss: 0.2838, MAE: 0.5381, R²: 0.5380
+  Val   - Loss: 0.3388, MAE: 0.5550, R²: 0.5590, Pearson: 0.7525
+  ✅ Val loss improved: 0.4064 → 0.3388 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 7/80 (LR: 7.50e-05)
+  Train - Loss: 0.2604, MAE: 0.5207, R²: 0.5705
+  Val   - Loss: 0.3700, MAE: 0.6236, R²: 0.4540, Pearson: 0.7039
+  ⚠️  Val loss: 0.3700 (best: 0.3388)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 8/80 (LR: 7.50e-05)
+  Train - Loss: 0.2276, MAE: 0.4638, R²: 0.6433
+  Val   - Loss: 0.3543, MAE: 0.5951, R²: 0.4802, Pearson: 0.7481
+  ⚠️  Val loss: 0.3543 (best: 0.3388)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 9/80 (LR: 7.50e-05)
+  Train - Loss: 0.2312, MAE: 0.4538, R²: 0.6591
+  Val   - Loss: 0.3676, MAE: 0.6060, R²: 0.4535, Pearson: 0.7173
+  ⚠️  Val loss: 0.3676 (best: 0.3388)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 10/80 (LR: 7.50e-05)
+  Train - Loss: 0.2071, MAE: 0.4405, R²: 0.6820
+  Val   - Loss: 0.3651, MAE: 0.6169, R²: 0.4503, Pearson: 0.7512
+  ⚠️  Val loss: 0.3651 (best: 0.3388)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 11/80 (LR: 7.50e-05)
+  Train - Loss: 0.2275, MAE: 0.4583, R²: 0.6564
+  Val   - Loss: 0.3631, MAE: 0.6176, R²: 0.4699, Pearson: 0.7262
+  ⚠️  Val loss: 0.3631 (best: 0.3388)
+  📊 Scheduler state: bad epochs 6/8, current LR: 7.50e-05
+Epoch 12/80 (LR: 7.50e-05)
+  Train - Loss: 0.1916, MAE: 0.4081, R²: 0.7288
+  Val   - Loss: 0.3756, MAE: 0.6639, R²: 0.3916, Pearson: 0.7562
+  ⚠️  Val loss: 0.3756 (best: 0.3388)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 13/80 (LR: 7.50e-05)
+  Train - Loss: 0.1946, MAE: 0.4188, R²: 0.7062
+  Val   - Loss: 0.3261, MAE: 0.5233, R²: 0.5900, Pearson: 0.7684
+  ✅ Val loss improved: 0.3388 → 0.3261 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 14/80 (LR: 7.50e-05)
+  Train - Loss: 0.2212, MAE: 0.4430, R²: 0.6775
+  Val   - Loss: 0.3396, MAE: 0.5484, R²: 0.5482, Pearson: 0.7652
+  ⚠️  Val loss: 0.3396 (best: 0.3261)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 15/80 (LR: 7.50e-05)
+  Train - Loss: 0.2160, MAE: 0.4339, R²: 0.6889
+  Val   - Loss: 0.3278, MAE: 0.5544, R²: 0.5470, Pearson: 0.7531
+  ⚠️  Val loss: 0.3278 (best: 0.3261)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 16/80 (LR: 7.50e-05)
+  Train - Loss: 0.1963, MAE: 0.4191, R²: 0.7074
+  Val   - Loss: 0.3604, MAE: 0.5714, R²: 0.5241, Pearson: 0.7696
+  ⚠️  Val loss: 0.3604 (best: 0.3261)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 17/80 (LR: 7.50e-05)
+  Train - Loss: 0.1949, MAE: 0.4159, R²: 0.7151
+  Val   - Loss: 0.3267, MAE: 0.5545, R²: 0.5405, Pearson: 0.7538
+  ⚠️  Val loss: 0.3267 (best: 0.3261)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 18/80 (LR: 7.50e-05)
+  Train - Loss: 0.2059, MAE: 0.4341, R²: 0.6789
+  Val   - Loss: 0.3862, MAE: 0.7223, R²: 0.3062, Pearson: 0.7531
+  ⚠️  Val loss: 0.3862 (best: 0.3261)
+  📊 Scheduler state: bad epochs 6/8, current LR: 7.50e-05
+Epoch 19/80 (LR: 7.50e-05)
+  Train - Loss: 0.1771, MAE: 0.3881, R²: 0.7524
+  Val   - Loss: 0.3457, MAE: 0.5366, R²: 0.5606, Pearson: 0.7717
+  ⚠️  Val loss: 0.3457 (best: 0.3261)
+  📊 Scheduler state: bad epochs 7/8, current LR: 7.50e-05
+Epoch 20/80 (LR: 7.50e-05)
+  Train - Loss: 0.1856, MAE: 0.4075, R²: 0.7304
+  Val   - Loss: 0.3272, MAE: 0.5303, R²: 0.5735, Pearson: 0.7598
+  ⚠️  Val loss: 0.3272 (best: 0.3261)
+  📊 Scheduler state: bad epochs 8/8, current LR: 7.50e-05
+Epoch 21/80 (LR: 7.50e-05)
+  Train - Loss: 0.1798, MAE: 0.3924, R²: 0.7459
+  Val   - Loss: 0.3312, MAE: 0.5447, R²: 0.5424, Pearson: 0.7611
+  ⚠️  Val loss: 0.3312 (best: 0.3261)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 22/80 (LR: 7.50e-05)
+  Train - Loss: 0.1876, MAE: 0.4017, R²: 0.7296
+  Val   - Loss: 0.3237, MAE: 0.5452, R²: 0.5647, Pearson: 0.7648
+  ✅ Val loss improved: 0.3261 → 0.3237 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 23/80 (LR: 7.50e-05)
+  Train - Loss: 0.1767, MAE: 0.3775, R²: 0.7533
+  Val   - Loss: 0.3767, MAE: 0.5644, R²: 0.5105, Pearson: 0.7554
+  ⚠️  Val loss: 0.3767 (best: 0.3237)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 24/80 (LR: 7.50e-05)
+  Train - Loss: 0.1737, MAE: 0.3746, R²: 0.7758
+  Val   - Loss: 0.3254, MAE: 0.5379, R²: 0.5738, Pearson: 0.7650
+  ⚠️  Val loss: 0.3254 (best: 0.3237)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 25/80 (LR: 7.50e-05)
+  Train - Loss: 0.1771, MAE: 0.3861, R²: 0.7624
+  Val   - Loss: 0.3275, MAE: 0.5794, R²: 0.5136, Pearson: 0.7537
+  ⚠️  Val loss: 0.3275 (best: 0.3237)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 26/80 (LR: 7.50e-05)
+  Train - Loss: 0.1690, MAE: 0.3849, R²: 0.7624
+  Val   - Loss: 0.3222, MAE: 0.5671, R²: 0.5262, Pearson: 0.7636
+  ✅ Val loss improved: 0.3237 → 0.3222 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 27/80 (LR: 7.50e-05)
+  Train - Loss: 0.1788, MAE: 0.3851, R²: 0.7597
+  Val   - Loss: 0.3283, MAE: 0.5475, R²: 0.5564, Pearson: 0.7569
+  ⚠️  Val loss: 0.3283 (best: 0.3222)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 28/80 (LR: 7.50e-05)
+  Train - Loss: 0.1691, MAE: 0.3701, R²: 0.7780
+  Val   - Loss: 0.3145, MAE: 0.5140, R²: 0.5897, Pearson: 0.7846
+  ✅ Val loss improved: 0.3222 → 0.3145 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 29/80 (LR: 7.50e-05)
+  Train - Loss: 0.1846, MAE: 0.3849, R²: 0.7389
+  Val   - Loss: 0.3406, MAE: 0.5781, R²: 0.5238, Pearson: 0.7553
+  ⚠️  Val loss: 0.3406 (best: 0.3145)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 30/80 (LR: 7.50e-05)
+  Train - Loss: 0.1775, MAE: 0.3897, R²: 0.7510
+  Val   - Loss: 0.3373, MAE: 0.5295, R²: 0.5728, Pearson: 0.7579
+  ⚠️  Val loss: 0.3373 (best: 0.3145)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 31/80 (LR: 7.50e-05)
+  Train - Loss: 0.1672, MAE: 0.3719, R²: 0.7707
+  Val   - Loss: 0.3413, MAE: 0.5148, R²: 0.5807, Pearson: 0.7685
+  ⚠️  Val loss: 0.3413 (best: 0.3145)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 32/80 (LR: 7.50e-05)
+  Train - Loss: 0.1719, MAE: 0.3730, R²: 0.7718
+  Val   - Loss: 0.3381, MAE: 0.5398, R²: 0.5669, Pearson: 0.7616
+  ⚠️  Val loss: 0.3381 (best: 0.3145)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 33/80 (LR: 7.50e-05)
+  Train - Loss: 0.1690, MAE: 0.3785, R²: 0.7653
+  Val   - Loss: 0.3193, MAE: 0.5193, R²: 0.5955, Pearson: 0.7741
+  ⚠️  Val loss: 0.3193 (best: 0.3145)
+  📊 Scheduler state: bad epochs 6/8, current LR: 7.50e-05
+Epoch 34/80 (LR: 7.50e-05)
+  Train - Loss: 0.1649, MAE: 0.3662, R²: 0.7752
+  Val   - Loss: 0.3800, MAE: 0.6047, R²: 0.4602, Pearson: 0.7754
+  ⚠️  Val loss: 0.3800 (best: 0.3145)
+  📊 Scheduler state: bad epochs 7/8, current LR: 7.50e-05
+Epoch 35/80 (LR: 7.50e-05)
+  Train - Loss: 0.1691, MAE: 0.3759, R²: 0.7612
+  Val   - Loss: 0.3183, MAE: 0.5278, R²: 0.5871, Pearson: 0.7724
+  ⚠️  Val loss: 0.3183 (best: 0.3145)
+  📊 Scheduler state: bad epochs 8/8, current LR: 7.50e-05
+Epoch 36/80 (LR: 7.50e-05)
+  Train - Loss: 0.1641, MAE: 0.3762, R²: 0.7635
+  Val   - Loss: 0.3447, MAE: 0.5183, R²: 0.5800, Pearson: 0.7708
+  ⚠️  Val loss: 0.3447 (best: 0.3145)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 37/80 (LR: 7.50e-05)
+  Train - Loss: 0.1831, MAE: 0.3942, R²: 0.7565
+  Val   - Loss: 0.3038, MAE: 0.5136, R²: 0.6033, Pearson: 0.7821
+  ✅ Val loss improved: 0.3145 → 0.3038 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 38/80 (LR: 7.50e-05)
+  Train - Loss: 0.1585, MAE: 0.3550, R²: 0.7896
+  Val   - Loss: 0.3123, MAE: 0.5257, R²: 0.5885, Pearson: 0.7743
+  ⚠️  Val loss: 0.3123 (best: 0.3038)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 39/80 (LR: 7.50e-05)
+  Train - Loss: 0.1708, MAE: 0.3729, R²: 0.7648
+  Val   - Loss: 0.2986, MAE: 0.5014, R²: 0.6200, Pearson: 0.7877
+  ✅ Val loss improved: 0.3038 → 0.2986 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 40/80 (LR: 7.50e-05)
+  Train - Loss: 0.1571, MAE: 0.3627, R²: 0.8021
+  Val   - Loss: 0.3229, MAE: 0.5206, R²: 0.5761, Pearson: 0.7701
+  ⚠️  Val loss: 0.3229 (best: 0.2986)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 41/80 (LR: 7.50e-05)
+  Train - Loss: 0.1582, MAE: 0.3545, R²: 0.7876
+  Val   - Loss: 0.3280, MAE: 0.5181, R²: 0.5888, Pearson: 0.7677
+  ⚠️  Val loss: 0.3280 (best: 0.2986)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 42/80 (LR: 7.50e-05)
+  Train - Loss: 0.1663, MAE: 0.3698, R²: 0.7802
+  Val   - Loss: 0.3321, MAE: 0.5178, R²: 0.5967, Pearson: 0.7795
+  ⚠️  Val loss: 0.3321 (best: 0.2986)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 43/80 (LR: 7.50e-05)
+  Train - Loss: 0.1471, MAE: 0.3338, R²: 0.8184
+  Val   - Loss: 0.3131, MAE: 0.5300, R²: 0.5877, Pearson: 0.7781
+  ⚠️  Val loss: 0.3131 (best: 0.2986)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 44/80 (LR: 7.50e-05)
+  Train - Loss: 0.1533, MAE: 0.3436, R²: 0.8017
+  Val   - Loss: 0.3270, MAE: 0.5220, R²: 0.5792, Pearson: 0.7663
+  ⚠️  Val loss: 0.3270 (best: 0.2986)
+  📊 Scheduler state: bad epochs 6/8, current LR: 7.50e-05
+Epoch 45/80 (LR: 7.50e-05)
+  Train - Loss: 0.1556, MAE: 0.3584, R²: 0.7991
+  Val   - Loss: 0.3279, MAE: 0.5276, R²: 0.5840, Pearson: 0.7734
+  ⚠️  Val loss: 0.3279 (best: 0.2986)
+  📊 Scheduler state: bad epochs 7/8, current LR: 7.50e-05
+Epoch 46/80 (LR: 7.50e-05)
+  Train - Loss: 0.1617, MAE: 0.3553, R²: 0.7839
+  Val   - Loss: 0.3039, MAE: 0.5026, R²: 0.6037, Pearson: 0.7813
+  ⚠️  Val loss: 0.3039 (best: 0.2986)
+  📊 Scheduler state: bad epochs 8/8, current LR: 7.50e-05
+Epoch 47/80 (LR: 7.50e-05)
+  Train - Loss: 0.1506, MAE: 0.3420, R²: 0.8020
+  Val   - Loss: 0.3568, MAE: 0.5974, R²: 0.4878, Pearson: 0.7585
+  ⚠️  Val loss: 0.3568 (best: 0.2986)
+  📉 Learning rate reduced: 7.50e-05 → 2.47e-05 (bad epochs: 0/8)
+Epoch 48/80 (LR: 2.47e-05)
+  Train - Loss: 0.1621, MAE: 0.3566, R²: 0.7886
+  Val   - Loss: 0.3233, MAE: 0.5282, R²: 0.5693, Pearson: 0.7844
+  ⚠️  Val loss: 0.3233 (best: 0.2986)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 49/80 (LR: 2.47e-05)
+  Train - Loss: 0.1571, MAE: 0.3501, R²: 0.7969
+  Val   - Loss: 0.3120, MAE: 0.5060, R²: 0.6074, Pearson: 0.7806
+  ⚠️  Val loss: 0.3120 (best: 0.2986)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 50/80 (LR: 2.47e-05)
+  Train - Loss: 0.1459, MAE: 0.3272, R²: 0.8240
+  Val   - Loss: 0.3134, MAE: 0.5200, R²: 0.5931, Pearson: 0.7737
+  ⚠️  Val loss: 0.3134 (best: 0.2986)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 51/80 (LR: 2.47e-05)
+  Train - Loss: 0.1375, MAE: 0.3233, R²: 0.8286
+  Val   - Loss: 0.3205, MAE: 0.5075, R²: 0.6052, Pearson: 0.7789
+  ⚠️  Val loss: 0.3205 (best: 0.2986)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.47e-05
+Epoch 52/80 (LR: 2.47e-05)
+  Train - Loss: 0.1391, MAE: 0.3228, R²: 0.8315
+  Val   - Loss: 0.3160, MAE: 0.5163, R²: 0.5895, Pearson: 0.7709
+  ⚠️  Val loss: 0.3160 (best: 0.2986)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.47e-05
+Epoch 53/80 (LR: 2.47e-05)
+  Train - Loss: 0.1391, MAE: 0.3254, R²: 0.8304
+  Val   - Loss: 0.3200, MAE: 0.5085, R²: 0.5999, Pearson: 0.7752
+  ⚠️  Val loss: 0.3200 (best: 0.2986)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.47e-05
+Epoch 54/80 (LR: 2.47e-05)
+  Train - Loss: 0.1333, MAE: 0.3023, R²: 0.8522
+  Val   - Loss: 0.3130, MAE: 0.5218, R²: 0.5914, Pearson: 0.7714
+  ⚠️  Val loss: 0.3130 (best: 0.2986)
+  📊 Scheduler state: bad epochs 7/8, current LR: 2.47e-05
+Epoch 55/80 (LR: 2.47e-05)
+  Train - Loss: 0.1312, MAE: 0.2988, R²: 0.8473
+  Val   - Loss: 0.3096, MAE: 0.4994, R²: 0.6147, Pearson: 0.7846
+  ⚠️  Val loss: 0.3096 (best: 0.2986)
+  📊 Scheduler state: bad epochs 8/8, current LR: 2.47e-05
+Epoch 56/80 (LR: 2.47e-05)
+  Train - Loss: 0.1367, MAE: 0.3220, R²: 0.8307
+  Val   - Loss: 0.3137, MAE: 0.5087, R²: 0.5944, Pearson: 0.7759
+  ⚠️  Val loss: 0.3137 (best: 0.2986)
+  📉 Learning rate reduced: 2.47e-05 → 8.14e-06 (bad epochs: 0/8)
+Epoch 57/80 (LR: 8.14e-06)
+  Train - Loss: 0.1340, MAE: 0.2990, R²: 0.8506
+  Val   - Loss: 0.3197, MAE: 0.4968, R²: 0.6096, Pearson: 0.7815
+  ⚠️  Val loss: 0.3197 (best: 0.2986)
+  📊 Scheduler state: bad epochs 1/8, current LR: 8.14e-06
+Epoch 58/80 (LR: 8.14e-06)
+  Train - Loss: 0.1474, MAE: 0.3281, R²: 0.8257
+  Val   - Loss: 0.3181, MAE: 0.4972, R²: 0.6095, Pearson: 0.7811
+  ⚠️  Val loss: 0.3181 (best: 0.2986)
+  📊 Scheduler state: bad epochs 2/8, current LR: 8.14e-06
+Epoch 59/80 (LR: 8.14e-06)
+  Train - Loss: 0.1316, MAE: 0.3053, R²: 0.8501
+  Val   - Loss: 0.3148, MAE: 0.5077, R²: 0.5995, Pearson: 0.7752
+  ⚠️  Val loss: 0.3148 (best: 0.2986)
+Early stopping at epoch 59
+Fold 4 completed - Best Val Loss: 0.2986
+Best metrics - Epoch 39 - Loss: 0.2986, MAE: 0.5014, R²: 0.6200, Pearson: 0.7877
+============================================================FOLD 5/5 - RESNET34============================================================\nFold 5 - Train samples: 912, Val samples: 228
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 1/80 (LR: 7.50e-05)
+  Train - Loss: 1.0380, MAE: 5.9295, R²: -33.2073
+  Val   - Loss: 0.9636, MAE: 5.9350, R²: -32.7136, Pearson: 0.6580
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 2/80 (LR: 7.50e-05)
+  Train - Loss: 0.9435, MAE: 5.1520, R²: -26.7251
+  Val   - Loss: 0.7067, MAE: 2.6166, R²: -7.6025, Pearson: 0.6533
+  ✅ Val loss improved: 0.9636 → 0.7067 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 3/80 (LR: 7.50e-05)
+  Train - Loss: 0.6006, MAE: 1.7418, R²: -4.4479
+  Val   - Loss: 0.5756, MAE: 1.0609, R²: -0.4032, Pearson: 0.6938
+  ✅ Val loss improved: 0.7067 → 0.5756 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 4/80 (LR: 7.50e-05)
+  Train - Loss: 0.3534, MAE: 0.6367, R²: 0.3424
+  Val   - Loss: 0.4920, MAE: 0.8486, R²: 0.0082, Pearson: 0.7103
+  ✅ Val loss improved: 0.5756 → 0.4920 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 5/80 (LR: 7.50e-05)
+  Train - Loss: 0.3124, MAE: 0.5851, R²: 0.4615
+  Val   - Loss: 0.3493, MAE: 0.5844, R²: 0.4270, Pearson: 0.7253
+  ✅ Val loss improved: 0.4920 → 0.3493 (new best!)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 6/80 (LR: 7.50e-05)
+  Train - Loss: 0.2528, MAE: 0.5163, R²: 0.5736
+  Val   - Loss: 0.3377, MAE: 0.5574, R²: 0.4489, Pearson: 0.7200
+  ✅ Val loss improved: 0.3493 → 0.3377 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 7/80 (LR: 7.50e-05)
+  Train - Loss: 0.2419, MAE: 0.4846, R²: 0.6210
+  Val   - Loss: 0.3648, MAE: 0.6299, R²: 0.3779, Pearson: 0.7240
+  ⚠️  Val loss: 0.3648 (best: 0.3377)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 8/80 (LR: 7.50e-05)
+  Train - Loss: 0.2494, MAE: 0.4971, R²: 0.6061
+  Val   - Loss: 0.3310, MAE: 0.5267, R²: 0.5222, Pearson: 0.7480
+  ✅ Val loss improved: 0.3377 → 0.3310 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 9/80 (LR: 7.50e-05)
+  Train - Loss: 0.2160, MAE: 0.4577, R²: 0.6764
+  Val   - Loss: 0.3351, MAE: 0.5285, R²: 0.4782, Pearson: 0.7347
+  ⚠️  Val loss: 0.3351 (best: 0.3310)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 10/80 (LR: 7.50e-05)
+  Train - Loss: 0.2219, MAE: 0.4582, R²: 0.6614
+  Val   - Loss: 0.3579, MAE: 0.5777, R²: 0.4360, Pearson: 0.7246
+  ⚠️  Val loss: 0.3579 (best: 0.3310)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 11/80 (LR: 7.50e-05)
+  Train - Loss: 0.1991, MAE: 0.4245, R²: 0.7164
+  Val   - Loss: 0.3347, MAE: 0.5227, R²: 0.4839, Pearson: 0.7451
+  ⚠️  Val loss: 0.3347 (best: 0.3310)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 12/80 (LR: 7.50e-05)
+  Train - Loss: 0.1967, MAE: 0.4179, R²: 0.7163
+  Val   - Loss: 0.3540, MAE: 0.5037, R²: 0.5559, Pearson: 0.7461
+  ⚠️  Val loss: 0.3540 (best: 0.3310)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 13/80 (LR: 7.50e-05)
+  Train - Loss: 0.1999, MAE: 0.4232, R²: 0.7265
+  Val   - Loss: 0.3819, MAE: 0.6163, R²: 0.4226, Pearson: 0.7232
+  ⚠️  Val loss: 0.3819 (best: 0.3310)
+  📊 Scheduler state: bad epochs 0/8, current LR: 7.50e-05
+Epoch 14/80 (LR: 7.50e-05)
+  Train - Loss: 0.1963, MAE: 0.4251, R²: 0.7111
+  Val   - Loss: 0.3047, MAE: 0.4712, R²: 0.5987, Pearson: 0.7772
+  ✅ Val loss improved: 0.3310 → 0.3047 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 7.50e-05
+Epoch 15/80 (LR: 7.50e-05)
+  Train - Loss: 0.2051, MAE: 0.4357, R²: 0.6979
+  Val   - Loss: 0.3166, MAE: 0.5069, R²: 0.5357, Pearson: 0.7468
+  ⚠️  Val loss: 0.3166 (best: 0.3047)
+  📊 Scheduler state: bad epochs 2/8, current LR: 7.50e-05
+Epoch 16/80 (LR: 7.50e-05)
+  Train - Loss: 0.2045, MAE: 0.4271, R²: 0.7008
+  Val   - Loss: 0.3619, MAE: 0.5733, R²: 0.4473, Pearson: 0.7302
+  ⚠️  Val loss: 0.3619 (best: 0.3047)
+  📊 Scheduler state: bad epochs 3/8, current LR: 7.50e-05
+Epoch 17/80 (LR: 7.50e-05)
+  Train - Loss: 0.2071, MAE: 0.4394, R²: 0.6899
+  Val   - Loss: 0.3357, MAE: 0.5290, R²: 0.5135, Pearson: 0.7535
+  ⚠️  Val loss: 0.3357 (best: 0.3047)
+  📊 Scheduler state: bad epochs 4/8, current LR: 7.50e-05
+Epoch 18/80 (LR: 7.50e-05)
+  Train - Loss: 0.1914, MAE: 0.4207, R²: 0.7340
+  Val   - Loss: 0.3344, MAE: 0.5636, R²: 0.4646, Pearson: 0.7445
+  ⚠️  Val loss: 0.3344 (best: 0.3047)
+  📊 Scheduler state: bad epochs 5/8, current LR: 7.50e-05
+Epoch 19/80 (LR: 7.50e-05)
+  Train - Loss: 0.1856, MAE: 0.4040, R²: 0.7373
+  Val   - Loss: 0.3308, MAE: 0.5312, R²: 0.5035, Pearson: 0.7425
+  ⚠️  Val loss: 0.3308 (best: 0.3047)
+  📊 Scheduler state: bad epochs 6/8, current LR: 7.50e-05
+Epoch 20/80 (LR: 7.50e-05)
+  Train - Loss: 0.1747, MAE: 0.3867, R²: 0.7649
+  Val   - Loss: 0.3282, MAE: 0.4906, R²: 0.5476, Pearson: 0.7503
+  ⚠️  Val loss: 0.3282 (best: 0.3047)
+  📊 Scheduler state: bad epochs 7/8, current LR: 7.50e-05
+Epoch 21/80 (LR: 7.50e-05)
+  Train - Loss: 0.1821, MAE: 0.3914, R²: 0.7546
+  Val   - Loss: 0.3066, MAE: 0.4864, R²: 0.5559, Pearson: 0.7730
+  ⚠️  Val loss: 0.3066 (best: 0.3047)
+  📊 Scheduler state: bad epochs 8/8, current LR: 7.50e-05
+Epoch 22/80 (LR: 7.50e-05)
+  Train - Loss: 0.1802, MAE: 0.4042, R²: 0.7425
+  Val   - Loss: 0.3208, MAE: 0.4783, R²: 0.5693, Pearson: 0.7575
+  ⚠️  Val loss: 0.3208 (best: 0.3047)
+  📉 Learning rate reduced: 7.50e-05 → 2.47e-05 (bad epochs: 0/8)
+Epoch 23/80 (LR: 2.47e-05)
+  Train - Loss: 0.1694, MAE: 0.3787, R²: 0.7743
+  Val   - Loss: 0.3317, MAE: 0.4730, R²: 0.5858, Pearson: 0.7680
+  ⚠️  Val loss: 0.3317 (best: 0.3047)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 24/80 (LR: 2.47e-05)
+  Train - Loss: 0.1744, MAE: 0.3765, R²: 0.7705
+  Val   - Loss: 0.3233, MAE: 0.4821, R²: 0.5734, Pearson: 0.7643
+  ⚠️  Val loss: 0.3233 (best: 0.3047)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 25/80 (LR: 2.47e-05)
+  Train - Loss: 0.1617, MAE: 0.3685, R²: 0.7841
+  Val   - Loss: 0.3151, MAE: 0.4756, R²: 0.5766, Pearson: 0.7670
+  ⚠️  Val loss: 0.3151 (best: 0.3047)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 26/80 (LR: 2.47e-05)
+  Train - Loss: 0.1555, MAE: 0.3556, R²: 0.8008
+  Val   - Loss: 0.3123, MAE: 0.4767, R²: 0.5802, Pearson: 0.7676
+  ⚠️  Val loss: 0.3123 (best: 0.3047)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.47e-05
+Epoch 27/80 (LR: 2.47e-05)
+  Train - Loss: 0.1563, MAE: 0.3587, R²: 0.7982
+  Val   - Loss: 0.3207, MAE: 0.4831, R²: 0.5724, Pearson: 0.7673
+  ⚠️  Val loss: 0.3207 (best: 0.3047)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.47e-05
+Epoch 28/80 (LR: 2.47e-05)
+  Train - Loss: 0.1541, MAE: 0.3600, R²: 0.8002
+  Val   - Loss: 0.3172, MAE: 0.4781, R²: 0.5772, Pearson: 0.7671
+  ⚠️  Val loss: 0.3172 (best: 0.3047)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.47e-05
+Epoch 29/80 (LR: 2.47e-05)
+  Train - Loss: 0.1505, MAE: 0.3390, R²: 0.8158
+  Val   - Loss: 0.3138, MAE: 0.4782, R²: 0.5826, Pearson: 0.7667
+  ⚠️  Val loss: 0.3138 (best: 0.3047)
+  📊 Scheduler state: bad epochs 7/8, current LR: 2.47e-05
+Epoch 30/80 (LR: 2.47e-05)
+  Train - Loss: 0.1525, MAE: 0.3417, R²: 0.8135
+  Val   - Loss: 0.3423, MAE: 0.5122, R²: 0.5275, Pearson: 0.7642
+  ⚠️  Val loss: 0.3423 (best: 0.3047)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 31/80 (LR: 2.47e-05)
+  Train - Loss: 0.1411, MAE: 0.3336, R²: 0.8282
+  Val   - Loss: 0.3016, MAE: 0.4765, R²: 0.5862, Pearson: 0.7711
+  ✅ Val loss improved: 0.3047 → 0.3016 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 32/80 (LR: 2.47e-05)
+  Train - Loss: 0.1459, MAE: 0.3306, R²: 0.8266
+  Val   - Loss: 0.3069, MAE: 0.4647, R²: 0.5947, Pearson: 0.7740
+  ⚠️  Val loss: 0.3069 (best: 0.3016)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 33/80 (LR: 2.47e-05)
+  Train - Loss: 0.1463, MAE: 0.3280, R²: 0.8189
+  Val   - Loss: 0.2987, MAE: 0.4720, R²: 0.5985, Pearson: 0.7774
+  ✅ Val loss improved: 0.3016 → 0.2987 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 34/80 (LR: 2.47e-05)
+  Train - Loss: 0.1429, MAE: 0.3333, R²: 0.8229
+  Val   - Loss: 0.2993, MAE: 0.4717, R²: 0.5911, Pearson: 0.7748
+  ⚠️  Val loss: 0.2993 (best: 0.2987)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 35/80 (LR: 2.47e-05)
+  Train - Loss: 0.1468, MAE: 0.3435, R²: 0.8134
+  Val   - Loss: 0.3013, MAE: 0.4755, R²: 0.5745, Pearson: 0.7709
+  ⚠️  Val loss: 0.3013 (best: 0.2987)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 36/80 (LR: 2.47e-05)
+  Train - Loss: 0.1613, MAE: 0.3603, R²: 0.7862
+  Val   - Loss: 0.3237, MAE: 0.4993, R²: 0.5443, Pearson: 0.7600
+  ⚠️  Val loss: 0.3237 (best: 0.2987)
+  📊 Scheduler state: bad epochs 0/8, current LR: 2.47e-05
+Epoch 37/80 (LR: 2.47e-05)
+  Train - Loss: 0.1652, MAE: 0.3561, R²: 0.7945
+  Val   - Loss: 0.2956, MAE: 0.4787, R²: 0.5863, Pearson: 0.7718
+  ✅ Val loss improved: 0.2987 → 0.2956 (new best!)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.47e-05
+Epoch 38/80 (LR: 2.47e-05)
+  Train - Loss: 0.1641, MAE: 0.3538, R²: 0.7904
+  Val   - Loss: 0.3210, MAE: 0.4788, R²: 0.5808, Pearson: 0.7643
+  ⚠️  Val loss: 0.3210 (best: 0.2956)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.47e-05
+Epoch 39/80 (LR: 2.47e-05)
+  Train - Loss: 0.1494, MAE: 0.3396, R²: 0.8178
+  Val   - Loss: 0.3007, MAE: 0.4744, R²: 0.5860, Pearson: 0.7705
+  ⚠️  Val loss: 0.3007 (best: 0.2956)
+  📊 Scheduler state: bad epochs 3/8, current LR: 2.47e-05
+Epoch 40/80 (LR: 2.47e-05)
+  Train - Loss: 0.1504, MAE: 0.3463, R²: 0.8049
+  Val   - Loss: 0.2989, MAE: 0.4631, R²: 0.6024, Pearson: 0.7789
+  ⚠️  Val loss: 0.2989 (best: 0.2956)
+  📊 Scheduler state: bad epochs 4/8, current LR: 2.47e-05
+Epoch 41/80 (LR: 2.47e-05)
+  Train - Loss: 0.1400, MAE: 0.3186, R²: 0.8367
+  Val   - Loss: 0.2961, MAE: 0.4775, R²: 0.5844, Pearson: 0.7718
+  ⚠️  Val loss: 0.2961 (best: 0.2956)
+  📊 Scheduler state: bad epochs 5/8, current LR: 2.47e-05
+Epoch 42/80 (LR: 2.47e-05)
+  Train - Loss: 0.1519, MAE: 0.3518, R²: 0.8048
+  Val   - Loss: 0.3278, MAE: 0.4737, R²: 0.5779, Pearson: 0.7662
+  ⚠️  Val loss: 0.3278 (best: 0.2956)
+  📊 Scheduler state: bad epochs 6/8, current LR: 2.47e-05
+Epoch 43/80 (LR: 2.47e-05)
+  Train - Loss: 0.1371, MAE: 0.3218, R²: 0.8406
+  Val   - Loss: 0.3164, MAE: 0.4697, R²: 0.5987, Pearson: 0.7750
+  ⚠️  Val loss: 0.3164 (best: 0.2956)
+  📊 Scheduler state: bad epochs 7/8, current LR: 2.47e-05
+Epoch 44/80 (LR: 2.47e-05)
+  Train - Loss: 0.1520, MAE: 0.3337, R²: 0.8141
+  Val   - Loss: 0.3096, MAE: 0.4869, R²: 0.5687, Pearson: 0.7685
+  ⚠️  Val loss: 0.3096 (best: 0.2956)
+  📊 Scheduler state: bad epochs 8/8, current LR: 2.47e-05
+Epoch 45/80 (LR: 2.47e-05)
+  Train - Loss: 0.1416, MAE: 0.3187, R²: 0.8294
+  Val   - Loss: 0.3090, MAE: 0.4647, R²: 0.5957, Pearson: 0.7729
+  ⚠️  Val loss: 0.3090 (best: 0.2956)
+  📉 Learning rate reduced: 2.47e-05 → 8.14e-06 (bad epochs: 0/8)
+Epoch 46/80 (LR: 8.14e-06)
+  Train - Loss: 0.1401, MAE: 0.3206, R²: 0.8306
+  Val   - Loss: 0.3267, MAE: 0.4839, R²: 0.5723, Pearson: 0.7681
+  ⚠️  Val loss: 0.3267 (best: 0.2956)
+  📊 Scheduler state: bad epochs 1/8, current LR: 8.14e-06
+Epoch 47/80 (LR: 8.14e-06)
+  Train - Loss: 0.1419, MAE: 0.3116, R²: 0.8342
+  Val   - Loss: 0.3190, MAE: 0.4704, R²: 0.5908, Pearson: 0.7689
+  ⚠️  Val loss: 0.3190 (best: 0.2956)
+  📊 Scheduler state: bad epochs 2/8, current LR: 8.14e-06
+Epoch 48/80 (LR: 8.14e-06)
+  Train - Loss: 0.1477, MAE: 0.3338, R²: 0.8250
+  Val   - Loss: 0.3028, MAE: 0.4705, R²: 0.5898, Pearson: 0.7730
+  ⚠️  Val loss: 0.3028 (best: 0.2956)
+  📊 Scheduler state: bad epochs 3/8, current LR: 8.14e-06
+Epoch 49/80 (LR: 8.14e-06)
+  Train - Loss: 0.1369, MAE: 0.3320, R²: 0.8308
+  Val   - Loss: 0.3064, MAE: 0.4672, R²: 0.5956, Pearson: 0.7756
+  ⚠️  Val loss: 0.3064 (best: 0.2956)
+  📊 Scheduler state: bad epochs 4/8, current LR: 8.14e-06
+Epoch 50/80 (LR: 8.14e-06)
+  Train - Loss: 0.1412, MAE: 0.3233, R²: 0.8296
+  Val   - Loss: 0.3018, MAE: 0.4767, R²: 0.5842, Pearson: 0.7760
+  ⚠️  Val loss: 0.3018 (best: 0.2956)
+  📊 Scheduler state: bad epochs 5/8, current LR: 8.14e-06
+Epoch 51/80 (LR: 8.14e-06)
+  Train - Loss: 0.1372, MAE: 0.3169, R²: 0.8392
+  Val   - Loss: 0.3021, MAE: 0.4712, R²: 0.5870, Pearson: 0.7747
+  ⚠️  Val loss: 0.3021 (best: 0.2956)
+  📊 Scheduler state: bad epochs 6/8, current LR: 8.14e-06
+Epoch 52/80 (LR: 8.14e-06)
+  Train - Loss: 0.1294, MAE: 0.3135, R²: 0.8458
+  Val   - Loss: 0.3008, MAE: 0.4670, R²: 0.5907, Pearson: 0.7717
+  ⚠️  Val loss: 0.3008 (best: 0.2956)
+  📊 Scheduler state: bad epochs 7/8, current LR: 8.14e-06
+Epoch 53/80 (LR: 8.14e-06)
+  Train - Loss: 0.1274, MAE: 0.3044, R²: 0.8544
+  Val   - Loss: 0.3071, MAE: 0.4695, R²: 0.5912, Pearson: 0.7733
+  ⚠️  Val loss: 0.3071 (best: 0.2956)
+  📊 Scheduler state: bad epochs 8/8, current LR: 8.14e-06
+Epoch 54/80 (LR: 8.14e-06)
+  Train - Loss: 0.1438, MAE: 0.3303, R²: 0.8275
+  Val   - Loss: 0.3076, MAE: 0.4662, R²: 0.5939, Pearson: 0.7734
+  ⚠️  Val loss: 0.3076 (best: 0.2956)
+  📉 Learning rate reduced: 8.14e-06 → 2.68e-06 (bad epochs: 0/8)
+Epoch 55/80 (LR: 2.68e-06)
+  Train - Loss: 0.1322, MAE: 0.3157, R²: 0.8463
+  Val   - Loss: 0.3076, MAE: 0.4746, R²: 0.5819, Pearson: 0.7685
+  ⚠️  Val loss: 0.3076 (best: 0.2956)
+  📊 Scheduler state: bad epochs 1/8, current LR: 2.68e-06
+Epoch 56/80 (LR: 2.68e-06)
+  Train - Loss: 0.1244, MAE: 0.2918, R²: 0.8626
+  Val   - Loss: 0.3162, MAE: 0.4810, R²: 0.5762, Pearson: 0.7680
+  ⚠️  Val loss: 0.3162 (best: 0.2956)
+  📊 Scheduler state: bad epochs 2/8, current LR: 2.68e-06
+Epoch 57/80 (LR: 2.68e-06)
+  Train - Loss: 0.1244, MAE: 0.2928, R²: 0.8689
+  Val   - Loss: 0.3130, MAE: 0.4775, R²: 0.5842, Pearson: 0.7673
+  ⚠️  Val loss: 0.3130 (best: 0.2956)
+Early stopping at epoch 57
+Fold 5 completed - Best Val Loss: 0.2956
+Best metrics - Epoch 37 - Loss: 0.2956, MAE: 0.4787, R²: 0.5863, Pearson: 0.7718
+
+================================================================================
+CROSS-VALIDATION SUMMARY
+================================================================================
+Validation Loss - Mean: 0.3055 ± 0.0134
+MAE            - Mean: 0.4754 ± 0.0268
+R2             - Mean: 0.5922 ± 0.0306
+Pearson r      - Mean: 0.7743 ± 0.0184
+\nPer-fold Results:
+Fold | Val Loss | MAE     | R2      | Pearson
+---------------------------------------------
+   1 |   0.3271 |  0.4950 |  0.5464 |  0.7520
+   2 |   0.3148 |  0.4672 |  0.5891 |  0.7693
+   3 |   0.2915 |  0.4296 |  0.6419 |  0.8077
+   4 |   0.2986 |  0.5077 |  0.5995 |  0.7752
+   5 |   0.2956 |  0.4775 |  0.5842 |  0.7673
+🏆 Overall best model saved to: ../../log/ASMI_Regression_ImplantCleaned/ResNetHybridAttentionNetRegression/0_run_ASMI-Reg_2025-10-08_15-10-46/checkpoint/best_model.pth
+   Best fold: 3, Val Loss: 0.2915
+
+📊 Loading fold results from disk for analysis...
+
+📊 Saving training data to CSV files...
+
+🎉 Training completed!
+📁 Results saved to: ../../log/ASMI_Regression_ImplantCleaned/ResNetHybridAttentionNetRegression/0_run_ASMI-Reg_2025-10-08_15-10-46
+📊 CSV data saved to: ../../log/ASMI_Regression_ImplantCleaned/ResNetHybridAttentionNetRegression/0_run_ASMI-Reg_2025-10-08_15-10-46/csv_data/
+🏆 Best model saved to: ../../log/ASMI_Regression_ImplantCleaned/ResNetHybridAttentionNetRegression/0_run_ASMI-Reg_2025-10-08_15-10-46/checkpoint/best_model.pth
+
+💡 To generate plots and visualizations, run:
+   python plot.py --log-dir ../../log/ASMI_Regression_ImplantCleaned/ResNetHybridAttentionNetRegression/0_run_ASMI-Reg_2025-10-08_15-10-46

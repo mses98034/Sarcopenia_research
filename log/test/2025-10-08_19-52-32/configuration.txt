@@ -18,7 +18,7 @@ removal_strategy = inpaint
 # Note: This configuration enables implant removal to reduce model bias towards metal implants
 
 [Network]
-model = ResNetFusionAttentionNetRegression
+model = ResNetHybridAttentionNetRegression
 # Available: ResNetFusionTextNetRegression, ResNetFusionAttentionNetRegression, ResNetHybridAttentionNetRegression
 n_channels = 3
 backbone = resnet34
