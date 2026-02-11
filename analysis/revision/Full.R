@@ -1,13 +1,12 @@
 # ==============================================================================
-# Script Name: 08_integrated_analysis_final_strict_v9.R
+# Script Name: 08_integrated_analysis_final_strict_v12.R
 # Description: 
-#   [Final Polish v9]:
-#   1. Metric Update: Added "RMSE" to the Bootstrap Analysis and Final Summary Table.
-#   2. Previous features maintained: 
-#      - Pearson r (95% CI) in Subgroup table.
-#      - Detailed R1-R3 plots.
-#      - Random seed consistency.
-#      - Clean console output.
+#   [Final Polish v12]:
+#   1. Unified Age Subgroups: Console output now prints <60, 60-75, >75 to 
+#      perfectly match Figure 6. The obsolete <=75 logic is completely removed.
+#   2. Statistical Rigor: True Coefficient of Determination (R^2) used everywhere.
+#   3. Previous features maintained: Pearson r (95% CI), clean console, 
+#      strict random seed locking, and detailed publication-ready figures.
 # ==============================================================================
 
 # ================= 0. 環境與套件設定 =================
@@ -35,16 +34,26 @@ VAL_PRED_PATH   <- '../../log/ASMI_Regression_ImplantCleaned/ResNetFusionAttenti
 TEST_META_PATH  <- '../../log/test/2025-10-04_22-54-04/csv_data/test_patient_data.csv'
 TEST_PRED_PATH  <- '../../log/test/2025-10-04_22-54-04/csv_data/test_predictions.csv'
 
-OUTPUT_DIR <- "results_integrated_v9"
+OUTPUT_DIR <- "results_integrated_v12"
 dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 N_BOOTSTRAPS <- 1000
 
 # ================= 2. 輔助函數 =================
 
-calc_r2_pearson <- function(y_true, y_pred) {
-  r <- cor(y_true, y_pred, use = "complete.obs", method = "pearson")
-  return(r^2)
+# [STATISTICAL UPDATE]: 真正的 Coefficient of Determination (R^2)
+calc_r2_true <- function(y_true, y_pred) {
+  valid_idx <- complete.cases(y_true, y_pred)
+  yt <- y_true[valid_idx]
+  yp <- y_pred[valid_idx]
+  
+  if(length(yt) == 0) return(NA)
+  
+  ss_res <- sum((yt - yp)^2)
+  ss_tot <- sum((yt - mean(yt))^2)
+  
+  if(ss_tot == 0) return(NA)
+  return(1 - (ss_res / ss_tot))
 }
 
 calculate_risk_score <- function(gender, pred_asmi) {
@@ -78,9 +87,10 @@ calc_smd <- function(v1, v2, type="cont", val=1) {
 
 calc_metrics_basic <- function(y_true, y_pred) {
   mae <- mean(abs(y_true - y_pred), na.rm=TRUE)
-  r2 <- calc_r2_pearson(y_true, y_pred)
-  r <- cor(y_true, y_pred, use="complete.obs", method="pearson")
-  return(c(MAE=mae, R2=r2, Pearson=r))
+  rmse <- sqrt(mean((y_true - y_pred)^2, na.rm=TRUE))
+  r2 <- calc_r2_true(y_true, y_pred) # 使用真正的 R2
+  pearson_r <- cor(y_true, y_pred, use="complete.obs", method="pearson")
+  return(c(MAE=mae, RMSE=rmse, R2=r2, Pearson=pearson_r))
 }
 
 # ================= 3. 資料讀取與前處理 =================
@@ -184,15 +194,15 @@ met_lr_nb <- calc_metrics_basic(df_test$ASMI, pred_lr_nb)
 met_lr_bmi <- calc_metrics_basic(df_test$ASMI, pred_lr_bmi)
 
 message("---- Performance Comparison ----")
-message(sprintf("AI Model            : MAE=%.4f, R2=%.4f, Pearson=%.4f", met_ai[1], met_ai[2], met_ai[3]))
-message(sprintf("LR model (No BMI)   : MAE=%.4f, R2=%.4f, Pearson=%.4f", met_lr_nb[1], met_lr_nb[2], met_lr_nb[3]))
-message(sprintf("LR model (With BMI) : MAE=%.4f, R2=%.4f, Pearson=%.4f", met_lr_bmi[1], met_lr_bmi[2], met_lr_bmi[3]))
+message(sprintf("AI Model            : MAE=%.4f, RMSE=%.4f, R2=%.4f, Pearson=%.4f", met_ai['MAE'], met_ai['RMSE'], met_ai['R2'], met_ai['Pearson']))
+message(sprintf("LR model (No BMI)   : MAE=%.4f, RMSE=%.4f, R2=%.4f, Pearson=%.4f", met_lr_nb['MAE'], met_lr_nb['RMSE'], met_lr_nb['R2'], met_lr_nb['Pearson']))
+message(sprintf("LR model (With BMI) : MAE=%.4f, RMSE=%.4f, R2=%.4f, Pearson=%.4f", met_lr_bmi['MAE'], met_lr_bmi['RMSE'], met_lr_bmi['R2'], met_lr_bmi['Pearson']))
 
 
 message("\n================================================================================")
 message("3. Subgroup Analysis (Calculating & Storing for Figure 6)")
 message("--------------------------------------------------------------------------------")
-message(sprintf("%-18s | %-4s | %-6s | %-22s | %-22s | %-22s", "Subgroup", "N", "MAE", "Pearson r (95% CI)", "AUC (95% CI)", "Brier (95% CI)"))
+message(sprintf("%-18s | %-4s | %-6s | %-6s | %-22s | %-22s | %-22s", "Subgroup", "N", "MAE", "R2", "Pearson r (95% CI)", "AUC (95% CI)", "Brier (95% CI)"))
 
 fig6_data_ready <- data.frame()
 
@@ -224,7 +234,7 @@ process_subgroup_logic <- function(name, df_sub, set_label="External", silent=FA
   
   # 1. Point Estimates
   mae <- mean(abs(df_sub$ASMI - df_sub$predicted_asmi))
-  r2 <- calc_r2_pearson(df_sub$ASMI, df_sub$predicted_asmi)
+  r2 <- calc_r2_true(df_sub$ASMI, df_sub$predicted_asmi) # 真正 R2
   pearson_r <- cor(df_sub$ASMI, df_sub$predicted_asmi, method="pearson")
   
   # 2. Bootstrap
@@ -265,7 +275,7 @@ process_subgroup_logic <- function(name, df_sub, set_label="External", silent=FA
   
   # 3. Print Console (if not silent)
   if(!silent) {
-    message(sprintf("%-18s | %-4d | %.3f  | %-22s | %-22s | %-22s", name, nrow(df_sub), mae, pearson_str, auc_str, brier_str))
+    message(sprintf("%-18s | %-4d | %.3f  | %.3f  | %-22s | %-22s | %-22s", name, nrow(df_sub), mae, r2, pearson_str, auc_str, brier_str))
   }
   
   # 4. Return Data
@@ -298,22 +308,18 @@ for(g_name in names(g_list)) {
   fig6_data_ready <- rbind(fig6_data_ready, row_ext)
 }
 
-# 2. Age (Two Logics)
-# A. Console Logic (<=75 vs >75)
-age_groups_01 <- list("Age <= 75" = df_test %>% filter(Age <= 75), "Age > 75" = df_test %>% filter(Age > 75))
-for(a_name in names(age_groups_01)) {
-  dummy <- process_subgroup_logic(a_name, age_groups_01[[a_name]], "External", silent=FALSE)
-}
-
-# B. Figure 6 Logic (<60, 60-75, >75)
-run_age_fig6 <- function(df, set_label) {
-  r1 <- process_subgroup_logic("<60", df %>% filter(Age < 60), set_label, silent=TRUE)
-  r2 <- process_subgroup_logic("60-75", df %>% filter(Age >= 60 & Age <= 75), set_label, silent=TRUE)
-  r3 <- process_subgroup_logic(">75", df %>% filter(Age > 75), set_label, silent=TRUE)
+# 2. Age (Unified Logic: <60, 60-75, >75)
+# [MODIFIED]: Consolidated into a single function with a silent_flag parameter
+run_age_fig6 <- function(df, set_label, silent_flag) {
+  r1 <- process_subgroup_logic("<60", df %>% filter(Age < 60), set_label, silent=silent_flag)
+  r2 <- process_subgroup_logic("60-75", df %>% filter(Age >= 60 & Age <= 75), set_label, silent=silent_flag)
+  r3 <- process_subgroup_logic(">75", df %>% filter(Age > 75), set_label, silent=silent_flag)
   return(rbind(r1, r2, r3))
 }
-fig6_data_ready <- rbind(fig6_data_ready, run_age_fig6(df_internal, "Internal"))
-fig6_data_ready <- rbind(fig6_data_ready, run_age_fig6(df_test, "External"))
+# Execute Internal (Silent)
+fig6_data_ready <- rbind(fig6_data_ready, run_age_fig6(df_internal, "Internal", silent_flag=TRUE))
+# Execute External (Prints to Console matching exactly the Figure 6 groups)
+fig6_data_ready <- rbind(fig6_data_ready, run_age_fig6(df_test, "External", silent_flag=FALSE))
 
 # 3. Sensitivity (Time)
 if(!all(is.na(df_test$Time_period))) {
@@ -343,8 +349,8 @@ boot_stats_fn <- function(data, indices) {
   risk_score <- calculate_risk_score(d$Gender, d$predicted_asmi)
   
   mae <- mean(abs(y_true - y_pred))
-  rmse <- sqrt(mean((y_true - y_pred)^2)) # Calculated RMSE
-  r2 <- calc_r2_pearson(y_true, y_pred)
+  rmse <- sqrt(mean((y_true - y_pred)^2)) 
+  r2 <- calc_r2_true(y_true, y_pred) # 使用真正的 R2
   pearson_r <- cor(y_true, y_pred, method = "pearson")
   
   tp <- sum(y_class == 1 & y_class_pred == 1); tn <- sum(y_class == 0 & y_class_pred == 0)
@@ -475,9 +481,12 @@ calculate_classification_metrics <- function(y_true, y_pred, y_score) {
 # --- FIGURE 1: SCATTER ---
 figure1_scatter_comparison <- function(train_data, test_data, output_dir) {
   cat("   -> Figure 1...\n")
-  train_r <- cor(train_data$actual_asmi, train_data$predicted_asmi, method = "pearson"); train_r2 <- train_r^2
+  train_r <- cor(train_data$actual_asmi, train_data$predicted_asmi, method = "pearson")
+  train_r2 <- calc_r2_true(train_data$actual_asmi, train_data$predicted_asmi) 
   train_mae <- mean(abs(train_data$actual_asmi - train_data$predicted_asmi)); train_rmse <- sqrt(mean((train_data$actual_asmi - train_data$predicted_asmi)^2))
-  test_r <- cor(test_data$actual_asmi, test_data$predicted_asmi, method = "pearson"); test_r2 <- test_r^2
+  
+  test_r <- cor(test_data$actual_asmi, test_data$predicted_asmi, method = "pearson")
+  test_r2 <- calc_r2_true(test_data$actual_asmi, test_data$predicted_asmi)   
   test_mae <- mean(abs(test_data$actual_asmi - test_data$predicted_asmi)); test_rmse <- sqrt(mean((test_data$actual_asmi - test_data$predicted_asmi)^2))
   
   train_x_range <- range(train_data$actual_asmi, na.rm = TRUE); train_y_range <- range(train_data$predicted_asmi, na.rm = TRUE)
@@ -608,9 +617,7 @@ figure6_subgroup_analysis_fixed <- function(precalc_data, output_dir) {
     df$Subgroup <- factor(df$Subgroup, levels=names(cols))
     ggplot(df, aes(x=Subgroup, y=Pearson_r, fill=Subgroup)) +
       geom_bar(stat="identity", position="dodge") +
-      # [MODIFIED]: Added error bars for Pearson r
       geom_errorbar(aes(ymin=Pearson_CI_lower, ymax=Pearson_CI_upper), width=.4) +
-      # [MODIFIED]: Updated label to use Pearson_text (Mean + CI)
       annotate("text", x=1:nrow(df), y=0.02, label=df$Pearson_text, size=5, color="white", angle=90, fontface=2, hjust=0) +
       theme_classic() + labs(title=tit, x='', y='Pearson r') +
       scale_fill_manual(values=cols) +
